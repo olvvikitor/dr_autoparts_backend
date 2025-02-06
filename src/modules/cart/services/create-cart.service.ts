@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateCartDto } from '../dto/create-cart-dto';
+import { CreateCartDto } from '../dto/create-cart.dto';
 import { CartItem } from '@prisma/client';
 import { CartRepository } from '../repositories/cart.repository';
 import { CartItemRepository } from 'src/modules/cartItem/repositories/cartItem.repository';

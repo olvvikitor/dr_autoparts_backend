@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { CreateCartDto } from '../dto/create-cart-dto';
+import { CreateCartDto } from '../dto/create-cart.dto';
 import { CreateCartService } from '../services/create-cart.service';
 
 @Controller('cart')
