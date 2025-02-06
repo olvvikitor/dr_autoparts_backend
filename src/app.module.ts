@@ -4,13 +4,14 @@ import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { CartModule } from './modules/cart/cart.module';
 import { CartItemModule } from './modules/cartItem/cartItem.module';
+import AuthModule from './shared/auth/authGuard.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal:true
     }),
-    ProductModule, UserModule, CartModule, CartItemModule],
+    ProductModule, UserModule, CartModule, CartItemModule, AuthModule],
   controllers: [],
   providers: [],
 })
