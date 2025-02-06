@@ -37,4 +37,11 @@ export class CartItemRepository{
       }
     })
   }
+  async findItensCart(cartId:number):Promise<CartItem[]>{
+    return await this.prismaService.cartItem.findMany(
+      {
+        where:{cartId:cartId},
+      }
+    )
+  }
 }

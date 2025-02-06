@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { CreateCartDto } from '../dto/create-cart.dto';
 import { CreateCartService } from '../services/create-cart.service';
@@ -17,5 +17,4 @@ export class CartController{
     await createNewCartService.addItemCart(data, idClient)
      
   }
-
 }

@@ -15,4 +15,12 @@ export class ProductRepository{
   async getAll():Promise<Product[]>{
     return await this.prismaService.product.findMany()
   }
+
+  async getProductById(id:number):Promise<Product>{
+    return await this.prismaService.product.findFirst({
+      where:{
+        id:id
+      }
+    })
+  }
 }

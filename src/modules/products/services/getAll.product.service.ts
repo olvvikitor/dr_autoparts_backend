@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ProductRepository } from '../repositories/product.repository';
-import { ViewProductDto } from '../dtos/view-product.dto';
 import { Product } from '@prisma/client';
+import { ResponseProductDto } from '../dtos/response-product.dto';
+import { ProductMapper } from '../mappers/product.mapper';
 
 
 
@@ -9,19 +10,10 @@ import { Product } from '@prisma/client';
 export class GetAllProductService {
   constructor(private productRepository: ProductRepository) {
   }
-  async getAllProducts(): Promise<ViewProductDto[]> {
+  async getAllProducts(): Promise<ResponseProductDto[]> {
     const products = await this.productRepository.getAll()
-    return await this.productTransform(products)
+    const mapper = new ProductMapper().parseListToDto(products)
+    return await mapper
     
-  }
-
-  private async productTransform(products:Product[]):Promise<ViewProductDto[]>{
-    const productsTransform =  await Promise.all(products.map(async(product)=>{
-      return {
-        id: product.id,
-        name: product.name,
-      }
-    }))
-    return productsTransform
   }
 }
