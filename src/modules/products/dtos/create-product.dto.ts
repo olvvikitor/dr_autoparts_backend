@@ -1,21 +1,40 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber } from 'class-validator'
-export class CreateProductDto{
+import { IsNotEmpty, IsNumber, IsArray, ArrayNotEmpty, IsOptional, IsString } from 'class-validator';
 
-  @ApiProperty()
+export class CreateProductDto {
+  
   @IsNotEmpty()
-  name: string
-  @ApiProperty()
+  @IsString()
+  name: string;
+
   @IsNotEmpty()
-  description: string
-  @ApiProperty()
+  @IsString()
+  description: string;
+
+  @IsNotEmpty()
+  @IsString()
+  code: string
+
   @IsNumber()
-  price: number
-  @ApiProperty()
+  price: number;
+
   @IsNumber()
-  stock: number
-  @ApiProperty()
+  priceoast: number; 
+
   @IsNotEmpty()
-  category: string;
-  imageUrl?:string
+  @IsNumber()
+  categoryId: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true }) // Valida cada item do array
+  modelId: number[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true }) // Valida cada item do array
+  fornecedorId: number[]; 
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

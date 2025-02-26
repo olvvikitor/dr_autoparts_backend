@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,53 +7,123 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int      @id @default(autoincrement())
+enum TipoUnidade {  
+  PECA
+  KIT
+  JOGO
+}
+
+enum CartStatus {
+  ATIVO
+  FINALIZADO
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum OrderStatus {
+  PENDENTE
+  FINALIZADO
+  CANCELADO
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
   name     String
-  phone    String   @unique
+  products Product[] // Relacionamento 1:N com Product
+  
+}
+
+
+model Model {
+  id       Int            @id @default(autoincrement())
+  name     String
+  marca String
+  ano String
+  products ProductModel[] // Relacionamento N:N com Product
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  phone    String  @unique
   password String
-  role     String   @default("cliente") // "customer" ou "admin"
+  role     Role    @default(CLIENT)
   orders   Order[]
-  carts     Cart[]
+  carts    Cart[]
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
+  code        String
   description String
+  tipo TipoUnidade 
   price       Float
-  stock       Int
-  category    String
+  priceoast   Float
+  categoryId  Int       @map("category_id") // Chave estrangeira
+  category    Category         @relation(fields: [categoryId], references: [id])
   imageUrl    String?
   cartItems   CartItem[]
+  models      ProductModel[]   // Relacionamento N:N com Model
+  fornecedores ProductFornecedor[] // Relacionamento N:N com Fornecedor
+}
 
+model Fornecedor {
+  id    Int               @id @default(autoincrement())
+  name  String
+  code  String
+  products ProductFornecedor[] // Relacionamento N:N com Product
+}
+
+/// Tabela de junção para Produto x Fornecedor (N:N)
+model ProductFornecedor {
+  productId   Int
+  fornecedorId Int
+
+  product    Product    @relation(fields: [productId], references: [id])
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id])
+
+  @@id([productId, fornecedorId]) // Chave composta para evitar duplicidade
+}
+
+
+model ProductModel {
+  productId Int
+  modelId   Int
+
+  product Product @relation(fields: [productId], references: [id])
+  model   Model   @relation(fields: [modelId], references: [id])
+
+  @@id([productId, modelId]) // Chave composta para evitar duplicidade
 }
 
 model Cart {
   id        Int        @id @default(autoincrement())
   userId    Int
   user      User       @relation(fields: [userId], references: [id])
-  status    String     @default("ativo") // "ativo" ou "finalizado"
+  status    CartStatus @default(ATIVO)
   items     CartItem[]
   createdAt DateTime   @default(now())
 }
 
 model CartItem {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   cartId    Int
-  cart      Cart     @relation(fields: [cartId], references: [id])
+  cart      Cart    @relation(fields: [cartId], references: [id])
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   quantity  Int
 }
 
-
 model Order {
-  id        Int      @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
   items     Json
   total     Float
-  status    String   @default("pendente") // "pending", "completed", "cancelled"
-  createdAt DateTime @default(now())
+  status    OrderStatus @default(PENDENTE)
+  createdAt DateTime    @default(now())
 }
