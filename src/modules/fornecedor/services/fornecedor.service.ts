@@ -8,8 +8,8 @@ export class FornecedorService{
   constructor (@Inject() private prismaService:PrismaService) {
   }
 
-  async createNewCategory(data: CreateFornecedorDto):Promise<void>{
-    const categoryExist = await this.findCategoryByCode(data.nome)
+  async createNewFornecedor(data: CreateFornecedorDto):Promise<void>{
+    const categoryExist = await this.findFornecedorByCode(data.nome)
     if(categoryExist){
       throw new ConflictException('Já existe um fornecedor com esse código cadastrado')
     }
@@ -21,12 +21,12 @@ export class FornecedorService{
     })
   }
 
-  async findCategoryByCode(code:string):Promise<Category>{
+  async findFornecedorByCode(code:string):Promise<Category>{
     return await this.prismaService.fornecedor.findFirst({
       where: { name: code}
     })
   }
-  async findCategoryById(id:number):Promise<Category>{
+  async findFornecedorById(id:number):Promise<Category>{
     return await this.prismaService.fornecedor.findFirst({
       where: { id: id}
     })

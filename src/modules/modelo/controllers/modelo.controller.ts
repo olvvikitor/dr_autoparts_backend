@@ -3,7 +3,7 @@ import { ModeloService } from '../services/modelo.service';
 import { CreateFornecedorDto } from 'src/modules/fornecedor/dto/create-fornecedor-dto';
 import { CreateModeloDto } from '../dto/create-modelo-dto';
 
-@Controller('fornecedor')
+@Controller('modelo')
 export class ModeloController{
 
   constructor (private modeloService:ModeloService) {

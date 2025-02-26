@@ -1,5 +1,5 @@
 export enum TipoUnidade {
-  PECA,
-  KIT,
-  JOGO
+  PECA = 'PECA',
+  KIT = 'KIT' ,
+  JOGO = 'JOGO'
 }

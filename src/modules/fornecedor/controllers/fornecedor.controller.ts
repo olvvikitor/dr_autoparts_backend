@@ -11,7 +11,7 @@ export class FornecedorController{
 
   @Post('new')
   async createNewCategory(@Body() data:CreateFornecedorDto){
-    return await this.fornecedorService.createNewCategory(data)
+    return await this.fornecedorService.createNewFornecedor(data)
   }
 
 }

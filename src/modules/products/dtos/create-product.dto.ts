@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsArray, ArrayNotEmpty, IsOptional, IsString } from 'class-validator';
+import { TipoUnidade } from '../enums/tipoUnidade';
 
 export class CreateProductDto {
   
@@ -13,6 +14,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
   code: string
+
+  tipo: TipoUnidade
+  
 
   @IsNumber()
   price: number;
