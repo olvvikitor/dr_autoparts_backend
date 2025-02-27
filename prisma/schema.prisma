@@ -65,9 +65,10 @@ model Product {
   priceoast   Float
   categoryId  Int       @map("category_id") // Chave estrangeira
   category    Category         @relation(fields: [categoryId], references: [id])
+  modelId Int
   imageUrl    String?
   cartItems   CartItem[]
-  models      ProductModel[]   // Relacionamento N:N com Model
+  models      ProductModel[]    // Relacionamento N:N com Model
   fornecedores ProductFornecedor[] // Relacionamento N:N com Fornecedor
 }
 

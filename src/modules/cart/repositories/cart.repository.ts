@@ -20,7 +20,7 @@ export class CartRepository {
   async findCart(userId:number):Promise<Cart|null>{
     return await this.prismaService.cart.findFirst({
       where: {
-        userId:userId, status:'ativo'
+        userId:userId, status:'ATIVO'
       }
     })
   }

@@ -8,8 +8,8 @@ export class ProductRepository{
   constructor (@Inject() private prismaService:PrismaService) {
   }
 
-  async createNewProduct(data : CreateProductDto):Promise<void>{
-    await this.prismaService.product.create({
+  async createNewProduct(data : CreateProductDto):Promise<Product>{
+    return await this.prismaService.product.create({
       data: {
         name: data.name,
         code: data.code,
@@ -17,8 +17,7 @@ export class ProductRepository{
         price: data.price,
         priceoast: data.priceoast,
         tipo: data.tipo,
-        categoryId: data.categoryId
-
+        categoryId: data.categoryId,
       },
     })
   }

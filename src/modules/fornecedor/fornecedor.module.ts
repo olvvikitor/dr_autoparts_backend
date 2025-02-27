@@ -10,4 +10,4 @@ import { FornecedorController } from './controllers/fornecedor.controller';
   controllers:[FornecedorController],    
   exports:[FornecedorService]
   })
-export class CategoryModule{}
+export class FornecedorModule{}

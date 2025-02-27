@@ -10,4 +10,4 @@ import { ModeloController } from './controllers/modelo.controller';
   controllers:[ModeloController],    
   exports:[ModeloService]
   })
-export class CategoryModule{}
+export class ModeloModule{}
