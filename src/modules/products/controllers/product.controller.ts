@@ -31,4 +31,6 @@ export class ProductController{
     return await getProductService.execute(parseInt(id))
   }
 
+  
+
 }

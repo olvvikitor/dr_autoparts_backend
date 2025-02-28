@@ -11,9 +11,9 @@ export class GetAllProductService {
   constructor(private productRepository: ProductRepository) {
   }
   async getAllProducts(): Promise<ResponseProductDto[]> {
-    const products = await this.productRepository.getAll()
-    const mapper = new ProductMapper().parseListToDto(products)
-    return await mapper
+    const products = await this.productRepository.getAll() 
+    const mapper = await new ProductMapper().parseListToDto(products)
+    return  mapper
     
   }
 }
