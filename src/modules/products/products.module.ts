@@ -10,11 +10,12 @@ import { ModeloModule } from '../modelo/model.module';
 import { FornecedorModule } from '../fornecedor/fornecedor.module';
 import { ProductModelModule } from '../productModel/productModel.module';
 import { ProductFornecedorModule } from '../productFornecedor/productFornecedor.module';
+import { GetProductsService } from './services/getByNome.product.service';
 
 @Module({
   imports:[PrismaModule, CategoryModule, ModeloModule,FornecedorModule, ProductModelModule,ProductFornecedorModule],
-  providers:[ProductRepository,CreateProductService, GetAllProductService, GetProductByIdService],
+  providers:[ProductRepository,CreateProductService, GetAllProductService, GetProductByIdService,GetProductsService],
   controllers:[ProductController],
-  exports:[ProductRepository,CreateProductService,GetAllProductService,GetProductByIdService],
+  exports:[ProductRepository,CreateProductService,GetAllProductService,GetProductByIdService,GetProductsService],
 })
 export class ProductModule{}

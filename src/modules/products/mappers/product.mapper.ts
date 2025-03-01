@@ -2,7 +2,7 @@ import { Category, Fornecedor, Model, Product } from '@prisma/client';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 
 export class ProductMapper{
-  async parseToDto(product:Product & {category:Category, fornecedor:Fornecedor[], modelos:Model[]} ):Promise<ResponseProductDto>{
+  async parseToDto(product: (Product & { category: Category; fornecedores: { fornecedor: Fornecedor }[]; models: { model: Model }[] })):Promise<ResponseProductDto>{
     
     return {
       id: product.id,
@@ -10,18 +10,25 @@ export class ProductMapper{
       imgUrl: product.imageUrl,
       categoria: product.category.name,
       descricao: product.description,
-      fornecedores: product.fornecedor.map((p) =>{
+      fornecedores: product.fornecedores.map((p) =>{
         return{
-          name: p.name,
-          code: p.code
+          name: p.fornecedor.name,
+          code: p.fornecedor.code
         }
       }),
-      modelos:product.modelos,
+      modelos:product.models.map((m) =>{
+        return{
+          ano:m.model.ano,
+          marca:m.model.marca,
+          name:m.model.name
+        }
+      }),
       tipo:product.tipo
     }
   }
 
   async parseListToDto(products:(Product & { category: Category; fornecedores: { fornecedor: Fornecedor }[]; models: { model: Model }[] })[]): Promise<ResponseProductDto[]> {
+  console.log(products.map(p=>p.fornecedores), 'produtos')
     const productsTransform: ResponseProductDto[] = await Promise.all(
       products.map(async (product) => {
         return {

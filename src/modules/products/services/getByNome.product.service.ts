@@ -5,17 +5,17 @@ import { ProductMapper } from '../mappers/product.mapper';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 
 @Injectable()
-export class GetProductByIdService {
+export class GetProductsService {
   constructor(private productRepository: ProductRepository) {}
 
-  async execute(id: number): Promise<ResponseProductDto> {
+  async execute(filter: string): Promise<ResponseProductDto[]> {
     
-      const product = await this.productRepository.getProductById(id);
+      const product = await this.productRepository.foundProducts(filter);
       if (!product) {
         throw new NotFoundException(
-          `Produto com identificador: ${id} não encontrado`,
+          `Produto com identificador: ${filter} não encontrado`,
         );
       }
-      return new ProductMapper().parseToDto(product); 
+      return new ProductMapper().parseListToDto(product); 
   }
 }
