@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ProductRepository } from '../repositories/product.repository';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { CategoryService } from 'src/modules/category/services/category.service';
@@ -6,6 +6,7 @@ import { FornecedorService } from 'src/modules/fornecedor/services/fornecedor.se
 import { ModeloService } from 'src/modules/modelo/services/modelo.service';
 import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repositories/productFornecedor.repository';
+import { Role } from '@prisma/client';
 
 /**
  * Serviço responsável pela criação de novos produtos.
@@ -37,9 +38,15 @@ export class CreateProductService {
    * 
    * @param data Dados do produto recebidos via DTO.
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
+   * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto): Promise<void> {
+  async createNewProduct(data: CreateProductDto, role: string): Promise<void> {
+    try{
 
+    if(role !== Role.ADMIN){
+      throw new ForbiddenException('Acesso negado')
+    }
+    
     // Verifica se os IDs de modelo, fornecedor e categoria existem
     await this.verifyExistsIds(data.modelId, data.fornecedorId, data.categoryId);
 
@@ -48,6 +55,9 @@ export class CreateProductService {
 
     // Cria as relações entre o produto e os modelos/fornecedores
     await this.createRelationsProduct(data.modelId, data.fornecedorId, product.id);
+  }catch(error){
+    console.log(error)
+  }
   }
 
   /**

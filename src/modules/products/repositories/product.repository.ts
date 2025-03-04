@@ -132,4 +132,24 @@ export class ProductRepository {
       });
     } catch (error) {}
   }
+
+  async update(id: number, data: CreateProductDto): Promise<void> {
+    await this.prismaService.product.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: data.name,
+        code: data.code,
+        description: data.description,
+        price: data.price,
+        priceoast: data.priceoast,
+        tipo: data.tipo,
+        categoryId: data.categoryId,
+        fornecedores:{
+          connect: data.fornecedorId.map((i:number) => ({fornecedorId:i}))
+          }
+        }
+      }      
+  }
 }

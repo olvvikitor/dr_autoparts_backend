@@ -6,8 +6,9 @@ import { AllExceptionsFilter } from './shared/filters/HttpException.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/v1')
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
 
   const config = new DocumentBuilder()
     .setTitle('DR_AutoPArts docs')
@@ -15,7 +16,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('api/v1/docs', app, documentFactory);
+
   await app.listen(process.env.PORT ?? 3000);
+  console.log('backend available in http://localhost:3000/api/v1')
+  console.log('doccumentation available in http://localhost:3000/api/v1/docs')
 }
 bootstrap();

@@ -11,11 +11,35 @@ import { FornecedorModule } from '../fornecedor/fornecedor.module';
 import { ProductModelModule } from '../productModel/productModel.module';
 import { ProductFornecedorModule } from '../productFornecedor/productFornecedor.module';
 import { GetProductsService } from './services/getByNome.product.service';
+import AuthModule from 'src/shared/auth/authGuard.module';
+import { UpdateProductService } from './services/update.product.service';
 
 @Module({
-  imports:[PrismaModule, CategoryModule, ModeloModule,FornecedorModule, ProductModelModule,ProductFornecedorModule],
-  providers:[ProductRepository,CreateProductService, GetAllProductService, GetProductByIdService,GetProductsService],
-  controllers:[ProductController],
-  exports:[ProductRepository,CreateProductService,GetAllProductService,GetProductByIdService,GetProductsService],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    CategoryModule,
+    ModeloModule,
+    FornecedorModule,
+    ProductModelModule,
+    ProductFornecedorModule,
+  ],
+  providers: [
+    ProductRepository,
+    CreateProductService,
+    GetAllProductService,
+    GetProductByIdService,
+    GetProductsService,
+    UpdateProductService,
+  ],
+  controllers: [ProductController],
+  exports: [
+    ProductRepository,
+    CreateProductService,
+    GetAllProductService,
+    GetProductByIdService,
+    GetProductsService,
+    UpdateProductService,
+  ],
 })
-export class ProductModule{}
+export class ProductModule {}

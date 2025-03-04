@@ -13,7 +13,7 @@ export class ProductMapper{
       fornecedores: product.fornecedores.map((p) =>{
         return{
           name: p.fornecedor.name,
-          code: p.fornecedor.code
+          code: p.fornecedor.code,
         }
       }),
       modelos:product.models.map((m) =>{
@@ -41,7 +41,6 @@ export class ProductMapper{
             return {
               name: f.fornecedor.name,
               code: f.fornecedor.code,
-              // Você pode adicionar mais propriedades aqui, caso queira
             };
           }),
           modelos: product.models.map((m) => {
@@ -49,7 +48,6 @@ export class ProductMapper{
               name: m.model.name,
               marca: m.model.marca,
               ano: m.model.ano
-              // Adicione outras propriedades de "modelo" se necessário
             };
           }),
           tipo: product.tipo,

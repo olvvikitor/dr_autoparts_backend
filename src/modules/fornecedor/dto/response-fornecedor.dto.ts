@@ -1,17 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateFornecedorDto{
+export class ResponseFornecedorDto {
   @ApiProperty({
     description: 'Nome do fornecedor',
     required: true,
     example: 'Pireli'
     })
-  @IsString()
-  @IsNotEmpty()
-  nome: string
-  @IsString()
-  @IsNotEmpty()
+  name: string
   @ApiProperty({
     description: 'Código do fornecedor',
     required: true,
