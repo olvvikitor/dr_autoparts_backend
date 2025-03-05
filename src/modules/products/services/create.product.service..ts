@@ -6,7 +6,7 @@ import { FornecedorService } from 'src/modules/fornecedor/services/fornecedor.se
 import { ModeloService } from 'src/modules/modelo/services/modelo.service';
 import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repositories/productFornecedor.repository';
-import { Role } from '@prisma/client';
+import { Role } from 'src/modules/users/enums/role.enum';
 
 /**
  * Serviço responsável pela criação de novos produtos.
@@ -40,11 +40,11 @@ export class CreateProductService {
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto, role: string): Promise<void> {
+  async createNewProduct(data: CreateProductDto, role: Role): Promise<void> {
 
 
     if(role !== Role.ADMIN){
-      throw new ForbiddenException('Acesso negado')
+      throw new ForbiddenException('Usuário com perfil inválido')
     }
     
     // Verifica se os IDs de modelo, fornecedor e categoria existem

@@ -242,8 +242,8 @@ export class ProductController {
     },
   })
   @Put('update/:id')
-  async updateProduct(@Param('id') id:string,@Body() data: CreateProductDto):Promise<void>{
+  async updateProduct(@Param('id') id:string,@Body() data: CreateProductDto, @Req() req: MRequest):Promise<void>{
     const updateProductService = this.modulesRefs.get(UpdateProductService);
-    return await updateProductService.execute(parseInt(id),data);
+    return await updateProductService.execute(parseInt(id),data, req.user.role);
   }
 }

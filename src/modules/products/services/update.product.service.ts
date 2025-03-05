@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ProductRepository } from '../repositories/product.repository';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { CategoryService } from 'src/modules/category/services/category.service';
@@ -7,6 +7,7 @@ import { ModeloService } from 'src/modules/modelo/services/modelo.service';
 import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repositories/productFornecedor.repository';
 import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
+import { Role } from 'src/modules/users/enums/role.enum';
 
 @Injectable()
 export class UpdateProductService {
@@ -22,7 +23,11 @@ export class UpdateProductService {
   //O método de editar produto, recebe os parametros informados.
   //ATENÇÃO: PASSAR NO CORPO DA REQUISIÇÃO OS FORNECEDORES E MODELOS QUE JÁ TINHA ANTES
   //POIS QUANDO EDITA UM PRODUTO<O METODO REMOVE TODOS E ADICIONA OS QUE VEM NO CORPO
-  async execute(idProduct: number, data: CreateProductDto): Promise<void> {
+  async execute(idProduct: number, data: CreateProductDto, role:Role): Promise<void> {
+
+    if(role !== Role.ADMIN){
+      throw new ForbiddenException('Usuário com perfil inválido')
+    }
 
     await this.verifyExistsIds(
       data.modelId,
@@ -37,6 +42,7 @@ export class UpdateProductService {
       idProduct,
     );
     await this.productRepository.update(idProduct, data);
+
   }
   /**
    * Método responsável por editar as relações do produto com os modelos e fornecedores.
