@@ -180,6 +180,67 @@ export class ProductController {
     return await getProductService.execute(filter);
   }
 
+
+    /**
+   * @route PUT /product/update/{id}
+   * @description Edita um produto no sistema
+   * @param {CreateProductDto} data - Dados do produto a ser criado
+   * @param idProduct -ID do produto a ser editado
+   * @returns {Promise<void>}
+   */
+  @UseGuards(AuthGuard)
+  @ApiBody({type:CreateProductDto})
+  @ApiResponse({
+    status: 401,
+    description: 'Não autenticado - O usuário precisa estar autenticado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 401,
+          message: 'Token inválido ou ausente',
+          error: 'Unauthorized',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Acesso negado - O usuário não tem permissão para acessar este recurso',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 403,
+          message: 'Você não tem permissão para acessar este recurso',
+          error: 'Forbidden',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Recurso não encontrado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 404,
+          message: 'Categoria não encontrada | Modelo não encontrado | Fornecedor não encontrado | Produto não encontrado',
+          error: 'Not Found',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Produto Editado com sucesso',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 201,
+          message: 'Editado com sucesso'
+        },
+      },
+    },
+  })
   @Put('update/:id')
   async updateProduct(@Param('id') id:string,@Body() data: CreateProductDto):Promise<void>{
     const updateProductService = this.modulesRefs.get(UpdateProductService);
