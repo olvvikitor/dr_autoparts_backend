@@ -28,7 +28,6 @@ export class ProductMapper{
   }
 
   async parseListToDto(products:(Product & { category: Category; fornecedores: { fornecedor: Fornecedor }[]; models: { model: Model }[] })[]): Promise<ResponseProductDto[]> {
-  console.log(products.map(p=>p.fornecedores), 'produtos')
     const productsTransform: ResponseProductDto[] = await Promise.all(
       products.map(async (product) => {
         return {

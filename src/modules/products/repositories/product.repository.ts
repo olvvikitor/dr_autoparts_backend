@@ -146,10 +146,6 @@ export class ProductRepository {
         priceoast: data.priceoast,
         tipo: data.tipo,
         categoryId: data.categoryId,
-        fornecedores:{
-          connect: data.fornecedorId.map((i:number) => ({fornecedorId:i}))
-          }
-        }
-      }      
+      }})
   }
 }

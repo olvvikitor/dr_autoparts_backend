@@ -15,4 +15,11 @@ export class ProductFornecedorRepository{
       }
     })
   }
+  async delete(idProduct:number):Promise<void>{
+    await this.prismaService.productFornecedor.deleteMany({
+      where: {
+        productId: idProduct
+      }
+    })
+  }
 }

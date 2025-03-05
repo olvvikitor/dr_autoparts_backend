@@ -41,7 +41,7 @@ export class CreateProductService {
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
   async createNewProduct(data: CreateProductDto, role: string): Promise<void> {
-    try{
+
 
     if(role !== Role.ADMIN){
       throw new ForbiddenException('Acesso negado')
@@ -55,9 +55,7 @@ export class CreateProductService {
 
     // Cria as relações entre o produto e os modelos/fornecedores
     await this.createRelationsProduct(data.modelId, data.fornecedorId, product.id);
-  }catch(error){
-    console.log(error)
-  }
+
   }
 
   /**
@@ -80,7 +78,9 @@ export class CreateProductService {
     await Promise.all(
       idsFornecedores.map(async id => {
         const fornecedor = await this.fornecedorService.findFornecedorById(id);
-        if (!fornecedor) throw new NotFoundException(`Fornecedor com ID ${id} não encontrado.`);
+        if (!fornecedor){
+          throw new NotFoundException(`Fornecedor com ID ${id} não encontrado.`);
+        } 
       })
     );
 
@@ -88,7 +88,9 @@ export class CreateProductService {
     await Promise.all(
       idsModels.map(async id => {
         const model = await this.modeloService.findModelById(id);
-        if (!model) throw new NotFoundException(`Modelo com ID ${id} não encontrado.`);
+        if (!model) {
+          throw new NotFoundException(`Modelo com ID ${id} não encontrado.`);
+        }
       })
     );
   }

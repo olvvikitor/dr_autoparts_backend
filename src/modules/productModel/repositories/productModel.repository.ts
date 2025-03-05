@@ -10,9 +10,17 @@ export class ProductModelRepository{
   async createRelation(idProduct, idModel):Promise<void>{
     await this.prismaService.productModel.create({
       data:{
+        productId: idProduct,
         modelId: idModel,
-        productId: idProduct
       }
     })
   }
+  async delete(idProduct:number):Promise<void>{
+    await this.prismaService.productModel.deleteMany({
+      where:{
+        productId: idProduct
+        
+      }
+  })
+}
 }

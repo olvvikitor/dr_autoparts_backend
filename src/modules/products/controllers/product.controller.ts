@@ -138,7 +138,6 @@ export class ProductController {
   })
   @Get('/:id')
   async getProductById(@Param('id') id: string): Promise<ResponseProductDto> {
-    console.log(id);
     const getProductByIdService = this.modulesRefs.get(GetProductByIdService);
     return await getProductByIdService.execute(parseInt(id));
   }
