@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TipoUnidade {  
+enum TipoUnidade {
   PECA
   KIT
   JOGO
@@ -33,54 +33,86 @@ model Category {
   id       Int       @id @default(autoincrement())
   name     String
   products Product[] // Relacionamento 1:N com Product
-  
 }
-
 
 model Model {
   id       Int            @id @default(autoincrement())
   name     String
-  marca String
-  ano String
+  marca    String
+  ano      String
   products ProductModel[] // Relacionamento N:N com Product
 }
 
-model User {
-  id       Int     @id @default(autoincrement())
-  name     String
-  phone    String  @unique
-  password String
-  role     Role    @default(CLIENT)
-  orders   Order[]
-  carts    Cart[]
+model Address {
+  id      Int       @id @default(autoincrement())
+  estado  String
+  cidade  String
+  bairro  String
+  rua     String
+  numero  String
+  cep     String
+  User User[]
 }
 
+model Contato {
+  id Int @id @default(autoincrement())
+  telefone String
+  email String?
+  User User[]
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  name       String
+  tipo       TipoUsuario  // Define se o usuário é pessoa física ou empresa
+  role       Role      @default(CLIENT)
+  cpf        String   @unique  // Somente se for PESSOA_FISICA
+  cnpj       String?   @unique  // Somente se for EMPRESA
+  enderecoId Int?
+  endereco   Address?  @relation(fields: [enderecoId], references: [id])
+  contatoId  Int?
+  contato    Contato?  @relation(fields: [contatoId], references: [id])
+  password   String
+  orders     Order[]
+  carts      Cart[]
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+
+}
+
+enum TipoUsuario {
+  PESSOA_FISICA
+  EMPRESA
+}
+
+
+
 model Product {
-  id          Int              @id @default(autoincrement())
-  name        String
-  code        String
-  description String
-  tipo TipoUnidade 
-  price       Float
-  priceoast   Float
-  categoryId  Int       @map("category_id") // Chave estrangeira
-  category    Category  @relation(fields: [categoryId], references: [id])
-  imageUrl    String?
-  cartItems   CartItem[]
-  models      ProductModel[]    // Relacionamento N:N com Model
+  id           Int                 @id @default(autoincrement())
+  name         String
+  code         String
+  description  String
+  tipo         TipoUnidade
+  price        Float
+  priceoast    Float
+  categoryId   Int                 @map("category_id") // Chave estrangeira
+  category     Category            @relation(fields: [categoryId], references: [id])
+  imageUrl     String?
+  cartItems    CartItem[]
+  models       ProductModel[] // Relacionamento N:N com Model
   fornecedores ProductFornecedor[] // Relacionamento N:N com Fornecedor
 }
 
 model Fornecedor {
-  id    Int               @id @default(autoincrement())
-  name  String
-  code  String
+  id       Int                 @id @default(autoincrement())
+  name     String
+  code     String
   products ProductFornecedor[] // Relacionamento N:N com Product
 }
 
 /// Tabela de junção para Produto x Fornecedor (N:N)
 model ProductFornecedor {
-  productId   Int
+  productId    Int
   fornecedorId Int
 
   product    Product    @relation(fields: [productId], references: [id])
@@ -88,7 +120,6 @@ model ProductFornecedor {
 
   @@id([productId, fornecedorId]) // Chave composta para evitar duplicidade
 }
-
 
 model ProductModel {
   productId Int
@@ -103,7 +134,7 @@ model ProductModel {
 model Cart {
   id        Int        @id @default(autoincrement())
   userId    Int
-  user      User       @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
   status    CartStatus @default(ATIVO)
   items     CartItem[]
   createdAt DateTime   @default(now())
@@ -120,8 +151,8 @@ model CartItem {
 
 model Order {
   id        Int         @id @default(autoincrement())
-  userId    Int
-  user      User        @relation(fields: [userId], references: [id])
+  empresaId Int
+  user      User        @relation(fields: [empresaId], references: [id])
   items     Json
   total     Float
   status    OrderStatus @default(PENDENTE)

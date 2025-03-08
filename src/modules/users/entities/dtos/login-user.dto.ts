@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class LoginUserDto{
   @ApiProperty()
-  phone:string
+  cpf:string
   @ApiProperty()
   password: string
 }
