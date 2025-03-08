@@ -7,7 +7,7 @@ import { ModeloService } from 'src/modules/modelo/services/modelo.service';
 import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repositories/productFornecedor.repository';
 import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
-import { Role } from 'src/modules/users/enums/role.enum';
+import { Role } from 'src/modules/users/entities/enums/role.enum';
 
 @Injectable()
 export class UpdateProductService {

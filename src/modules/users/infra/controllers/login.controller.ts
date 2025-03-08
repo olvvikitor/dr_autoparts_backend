@@ -1,10 +1,8 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { CreateUserService } from '../services/create.user.service';
-import { LoginUserDto } from '../dtos/login-user.dto';
-import { LoginUserService } from '../services/login.user.service';
 import { log } from 'console';
+import { LoginUserDto } from '../../entities/dtos/login-user.dto';
+import { LoginUserService } from '../../services/login.user.service';
 
 @Controller('user')
 export class LoginController{
