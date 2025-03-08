@@ -5,7 +5,7 @@ import { GetAllProductService } from '../services/getAll.product.service';
 import { GetProductByIdService } from '../services/getById.product.service';
 import { GetProductsService } from '../services/getByNome.product.service';
 import { CreateProductService } from '../services/create.product.service.';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { MRequest } from 'src/shared/infra/http/MRequest';
@@ -23,6 +23,8 @@ export class ProductController {
    */
   @UseGuards(AuthGuard)
   @ApiBody({type:CreateProductDto})
+  @ApiOperation({summary: 'Criação de um novo produto'})
+  @ApiBearerAuth()
   @ApiResponse({
     status: 401,
     description: 'Não autenticado - O usuário precisa estar autenticado',
@@ -79,6 +81,7 @@ export class ProductController {
     const createProductService: CreateProductService = this.modulesRefs.get(CreateProductService);
     await createProductService.createNewProduct(data, req.user.role);
   }
+  @ApiOperation({summary:'busca de todos os produto'})
 
   /**
    * @route GET /products/all
@@ -110,7 +113,8 @@ export class ProductController {
    * @param {string} id - ID do produto a ser buscado
    * @returns {Promise<any>} Produto correspondente ao ID informado
    */
-  
+  @ApiOperation({summary:'busca de produto por id'})
+
   @ApiResponse({
     status: 200,
     type:ResponseProductDto,
@@ -148,6 +152,7 @@ export class ProductController {
    * @param {string} filter - Termo para buscar produtos
    * @returns {Promise<Array<ResponseProductDto>>} Lista de produtos que correspondem ao filtro
    */
+  @ApiOperation({summary:'Busca de produto por nome de qualquer relacionamento'})
 
   @ApiResponse({
     status: 200,
@@ -189,7 +194,9 @@ export class ProductController {
    * @returns {Promise<void>}
    */
   @UseGuards(AuthGuard)
+  @ApiOperation({summary:'Update de produto'})
   @ApiBody({type:CreateProductDto})
+  @ApiBearerAuth()
   @ApiResponse({
     status: 401,
     description: 'Não autenticado - O usuário precisa estar autenticado',
