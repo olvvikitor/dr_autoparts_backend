@@ -13,8 +13,6 @@ RUN npm install
 # Copia o código do projeto
 COPY . .
 
-COPY .env ./
-
 
 # Gera os arquivos do Prisma Client
 RUN npx prisma generate
