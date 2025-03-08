@@ -50,48 +50,42 @@ model Address {
   bairro  String
   rua     String
   numero  String
-  cep     Int
-  empresa Empresa[]
+  cep     String
+  User User[]
 }
 
 model Contato {
   id Int @id @default(autoincrement())
-  telefone Int
+  telefone String
   email String?
-  Empresa Empresa[]
-}
-
-model Empresa {
-  id                Int       @id @default(autoincrement())
-  razão_social     String
-  nome_fantasia     String?
-  atividade         String?
-  cnpj              Int?       @unique
-  cpf        Int       @unique
-  data_de_abertura  DateTime?
-  natureza_juridica String?
-  cnaes_utilizados  String?
-  enderecoId        Int?
-  endereco          Address?  @relation(fields: [enderecoId], references: [id])
-  contatoId Int?
-  contato Contato? @relation(fields: [contatoId], references: [id])
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  created_at        DateTime  @default(now())
-  updated_at        DateTime?
+  User User[]
 }
 
 model User {
   id         Int       @id @default(autoincrement())
   name       String
-  password   String
+  tipo       TipoUsuario  // Define se o usuário é pessoa física ou empresa
   role       Role      @default(CLIENT)
+  cpf        String   @unique  // Somente se for PESSOA_FISICA
+  cnpj       String?   @unique  // Somente se for EMPRESA
+  enderecoId Int?
+  endereco   Address?  @relation(fields: [enderecoId], references: [id])
+  contatoId  Int?
+  contato    Contato?  @relation(fields: [contatoId], references: [id])
+  password   String
   orders     Order[]
   carts      Cart[]
-  Empresa Empresa[]
-  created_at        DateTime  @default(now())
+  created_at DateTime  @default(now())
   updated_at DateTime?
+
 }
+
+enum TipoUsuario {
+  PESSOA_FISICA
+  EMPRESA
+}
+
+
 
 model Product {
   id           Int                 @id @default(autoincrement())

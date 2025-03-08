@@ -3,6 +3,8 @@ import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
 import { CreateUserDto } from '../entities/dtos/create-user.dto';
 import { UserRepository } from '../infra/repositories/user.repository';
+import { TipoUsuario } from '../entities/enums/tipo-user.enum';
+import { ConflictExceptions } from 'src/shared/errors/ConflicExeption';
 
 
 @Injectable()
@@ -17,12 +19,10 @@ export class CreateUserService {
     const hash = await this.encriptPassword(data.password);
     data.password = hash;
     //verificando a existencia de email
-    const cpfIsNotUse = await this.userRepository.findByUserByCpf(data.cpf)
+    
+    await this.verifyCpfExists(data.cpf)
 
-    if(!cpfIsNotUse){
-      //criando instancia no banco de dados
-     await this.userRepository.createNewUser(data)
-    }
+    await this.userRepository.createNewUser(data)
 
   }
 
@@ -35,11 +35,11 @@ export class CreateUserService {
 
   //método para verificação de email antes do cadastro do usuario
   //caso exista, retorna uma exception
-  //caso não exista um email, retorna true, validando aquele email para a criação
-  private async verifyCpfExists(cpf: number): Promise<boolean> {
+  //caso não exista um cpf, retorna true, validando aquele cpf para a criação
+  private async verifyCpfExists(cpf: string): Promise<boolean> {
     const exists = await this.userRepository.findByUserByCpf(cpf)
     if (exists) {
-       throw new ConflictException('Phone already exists');
+       throw new ConflictExceptions('Usuário', 'CPF', cpf);
     }
     return true
   }

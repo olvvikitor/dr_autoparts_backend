@@ -1,63 +1,59 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiBody, ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   MinLength,
   MaxLength,
   IsOptional,
   IsString,
-  IsNumber,
-  IsDateString,
+  IsEnum,
+  IsNumberString,
+  IsInt,
+  IsObject,
 } from 'class-validator';
+import { TipoUsuario } from '../enums/tipo-user.enum';
+import { Address, Contato } from '@prisma/client';
+import { CreateAddressDto } from './create-address-dto';
+import { CreateContatoDto } from './create-contato.dto';
 
 export class CreateUserDto {
-  @ApiProperty({ description: 'Nome completo do usuário', minLength: 8, maxLength: 40 })
+  @ApiProperty({ description: 'Nome completo do usuário', minLength: 8, maxLength: 40, example:"Joao victor" })
   @IsNotEmpty()
   @MinLength(8)
   @MaxLength(40)
   @IsString()
   name: string;
 
-  @ApiProperty({ description: 'Razão social da empresa' })
+  @ApiProperty({ description: 'Tipo de usuário (PESSOA_FISICA ou EMPRESA)', example:TipoUsuario.PESSOA_FISICA })
   @IsNotEmpty()
-  @IsString()
-  razão_social: string;
+  @IsEnum(TipoUsuario)
+  tipo: TipoUsuario;
 
-  @ApiProperty({ description: 'Nome fantasia da empresa', required: false })
+  @ApiProperty({ description: 'CPF do usuário ', required: true, example:"00000011133"})
+  @IsNumberString()
+  @MinLength(11)
+  @MaxLength(11)
+  cpf: string;
+
+  @ApiProperty({ description: 'CNPJ da empresa (somente se for EMPRESA)', required: false, example:"00000111000066" })
   @IsOptional()
-  @IsString()
-  nome_fantasia?: string | null;
+  @IsNumberString()
+  @MinLength(14)
+  @MaxLength(14)
+  cnpj?: string;
 
-  @ApiProperty({ description: 'Atividade principal da empresa', required: false })
+  @ApiProperty({ description: 'Endereço do usuário ou empresa', required: false })
   @IsOptional()
-  @IsString()
-  atividade?: string | null;
+  @IsObject()
+  @ApiProperty({type: CreateAddressDto})
+  endereco?: Address;
 
-  @ApiProperty({ description: 'Número do CNPJ', required: false, type: Number })
+  @ApiProperty({ description: 'Contato do usuário ou empresa', required: false })
   @IsOptional()
-  @IsNumber()
-  cnpj?: number | null;
+  @IsObject()
+  @ApiProperty({type:CreateContatoDto})
+  contato?: Contato;
 
-  @ApiProperty({ description: 'Número do CPF' })
-  @IsNotEmpty()
-  @IsNumber()
-  cpf: number;
-
-  @ApiProperty({ description: 'Data de abertura da empresa', required: false, type: String, format: 'date-time' })
-  @IsOptional()
-  @IsDateString()
-  data_de_abertura?: Date | string | null;
-
-  @ApiProperty({ description: 'Natureza jurídica da empresa', required: false })
-  @IsOptional()
-  @IsString()
-  natureza_juridica?: string | null;
-
-  @ApiProperty({ description: 'CNAEs utilizados pela empresa', required: false })
-  @IsOptional()
-  @IsString()
-  cnaes_utilizados?: string | null;
-
-  @ApiProperty({ description: 'Senha do usuário', minLength: 5, maxLength: 30 })
+  @ApiProperty({ description: 'Senha do usuário', minLength: 5, maxLength: 30 ,example:"senha123456"})
   @IsNotEmpty()
   @MinLength(5)
   @MaxLength(30)

@@ -2,7 +2,7 @@
 export type User = {
   id: number
   name: string
-  cpf: number
+  cpf: string
   password: string
   empresa: Empresa
   endereco: Address
