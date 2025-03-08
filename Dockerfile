@@ -34,8 +34,8 @@ COPY --from=builder /app/prisma ./prisma
 
 # Define as variáveis de ambiente
 ENV NODE_ENV=production
-ENV DATABASE_URL = postgresql://drautopart:drautopart@dev@localhost:5434/DR_AUTOPARTS?schema=public
-ENV JWT_SECRET = 66e53da5bef1e5e56a8e5ba111321269
+ENV DATABASE_URL=postgresql://drautopart:drautopart@dev@localhost:5434/DR_AUTOPARTS?schema=public
+ENV JWT_SECRET=66e53da5bef1e5e56a8e5ba111321269
 # Expõe a porta do NestJS
 EXPOSE 3000
 
