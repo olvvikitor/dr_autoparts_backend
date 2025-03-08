@@ -25,9 +25,16 @@ export class ProductRepository {
         price: data.price,
         priceoast: data.priceoast,
         tipo: data.tipo,
-        categoryId: data.categoryId,
-      },
-      include: { category: true, fornecedores: true, models: true },
+        category:{
+          connect:{id:data.categoryId}
+        },
+        models: {
+          create: data.modelId.map((idModel: number) => ({ modelId: idModel }))
+        },
+        fornecedores:{
+          create: data.fornecedorId.map((idFornecedor:number)=>({fornecedorId:idFornecedor}))
+        }
+      }
     });
   }
   async getAll(): Promise<
@@ -134,6 +141,13 @@ export class ProductRepository {
   }
 
   async update(id: number, data: CreateProductDto): Promise<void> {
+
+    await this.prismaService.productFornecedor.deleteMany({
+      where:{
+        productId: id
+      }
+    })
+
     await this.prismaService.product.update({
       where: {
         id: id,
@@ -146,6 +160,13 @@ export class ProductRepository {
         priceoast: data.priceoast,
         tipo: data.tipo,
         categoryId: data.categoryId,
+        models: {
+          create: data.modelId.map((idModel: number) => ({ modelId: idModel }))
+        },
+        fornecedores:{
+          create: data.fornecedorId.map((idFornecedor:number)=>({fornecedorId:idFornecedor}))
+        }
+        
       }})
   }
 }

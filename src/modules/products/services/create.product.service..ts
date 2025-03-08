@@ -54,7 +54,7 @@ export class CreateProductService {
     const product = await this.productRepository.createNewProduct(data);
 
     // Cria as relações entre o produto e os modelos/fornecedores
-    await this.createRelationsProduct(data.modelId, data.fornecedorId, product.id);
+    // await this.createRelationsProduct(data.modelId, data.fornecedorId, product.id);
 
   }
 
@@ -102,12 +102,12 @@ export class CreateProductService {
    * @param idsFornecedores Lista de IDs dos fornecedores a serem relacionados ao produto.
    * @param idProduct ID do produto recém-criado.
    */
-  private async createRelationsProduct(idsModels: number[], idsFornecedores: number[], idProduct: number): Promise<void> {
+  // private async createRelationsProduct(idsModels: number[], idsFornecedores: number[], idProduct: number): Promise<void> {
     
-    // Cria a relação Produto <-> Modelos
-    await Promise.all(idsModels.map(id => this.productModel.createRelation(idProduct, id)));
+  //   // Cria a relação Produto <-> Modelos
+  //   await Promise.all(idsModels.map(id => this.productModel.createRelation(idProduct, id)));
 
-    // Cria a relação Produto <-> Fornecedores
-    await Promise.all(idsFornecedores.map(id => this.productFornecedor.createRelation(idProduct, id)));
-  }
+  //   // Cria a relação Produto <-> Fornecedores
+  //   await Promise.all(idsFornecedores.map(id => this.productFornecedor.createRelation(idProduct, id)));
+  // }
 }

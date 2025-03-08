@@ -62,7 +62,6 @@ export class CreateProductDto {
     example: 1,
     required:false,
   })
-  @IsNotEmpty()
   @IsNumber()
   categoryId: number;
 

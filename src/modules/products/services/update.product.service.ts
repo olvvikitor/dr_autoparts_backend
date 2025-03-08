@@ -41,6 +41,7 @@ export class UpdateProductService {
       data.fornecedorId,
       idProduct,
     );
+
     await this.productRepository.update(idProduct, data);
 
   }
