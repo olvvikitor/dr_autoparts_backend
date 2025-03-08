@@ -18,7 +18,6 @@ COPY . .
 RUN npx prisma generate
 
 
-RUN npx prisma migrate deploy
 
 
 # Compila a aplicação NestJS para produção
@@ -42,4 +41,4 @@ COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
 # Executa as migrations e inicia a aplicação
-CMD  node dist/main.js
+CMD  npx prisma migrate deploy && node dist/main.js
