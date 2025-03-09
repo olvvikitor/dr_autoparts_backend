@@ -2,6 +2,7 @@ import { IsNotEmpty, IsNumber, IsArray, ArrayNotEmpty, IsOptional, IsString } fr
 import { TipoUnidade } from '../enums/tipoUnidade';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
+import { IsFile } from 'nestjs-form-data';
 
 export class CreateProductDto {
   
@@ -95,11 +96,12 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: `Caminho da imagem`,
-    example: 'C:\\Users\\Trabalho\\imagens\\cambio.jpg',
     required:false,
-    
-  })
+    format:'binary', 
+    })
   @IsOptional()
   @IsString()
-  imageUrl?: string | null;
+  @IsFile()
+
+  image?: Express.Multer.File;
 }

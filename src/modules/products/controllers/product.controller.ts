@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Header,
   HttpStatus,
   Param,
   ParseFilePipeBuilder,
@@ -10,7 +9,6 @@ import {
   Put,
   Query,
   Req,
-  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -24,6 +22,7 @@ import { CreateProductService } from '../services/create.product.service.';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -31,8 +30,7 @@ import { ResponseProductDto } from '../dtos/response-product.dto';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { MRequest } from 'src/shared/infra/http/MRequest';
 import { UpdateProductService } from '../services/update.product.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { FormDataRequest } from 'nestjs-form-data';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductController {
@@ -45,8 +43,19 @@ export class ProductController {
    * @returns {Promise<void>}
    */
   @UseGuards(AuthGuard)
-  @ApiBody({ type: CreateProductDto })
-  @ApiOperation({ summary: 'Criação de um novo produto' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateProductDto,
+
+    description:
+      'Dados do produto e arquivo de imagem (se presente). Requisição deve ser do tipo multipart/form-data.',
+    required: true, // Define que o corpo deve ser preenchido
+  },)
+  @ApiOperation({
+    summary:
+      'Criação de um novo produto com a possibilidade de upload de uma imagem',
+  })
+  
   @ApiBearerAuth()
   @ApiResponse({
     status: 401,
@@ -77,7 +86,8 @@ export class ProductController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Recurso não encontrado',
+    description:
+      'Recurso não encontrado - Categoria, Modelo ou Fornecedor não encontrado',
     content: {
       'application/json': {
         example: {
@@ -101,8 +111,22 @@ export class ProductController {
       },
     },
   })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Erro no processamento do arquivo - Tipo de arquivo inválido ou arquivo não enviado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 422,
+          message: 'Arquivo inválido ou não enviado',
+          error: 'Unprocessable Entity',
+        },
+      },
+    },
+  })
   @Post('new')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   async createNewProduct(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -114,17 +138,17 @@ export class ProductController {
           fileIsRequired: false,
         }),
     )
-    file: Express.Multer.File,
+    image: Express.Multer.File,
     @Body() data: CreateProductDto,
     @Req() req: any,
   ): Promise<void> {
-    console.log(file);
+    const urlImg = image ? (image as any).location || image.path : null;
     const createProductService: CreateProductService =
       this.modulesRefs.get(CreateProductService);
-    await createProductService.createNewProduct(data, req.user.role);
-  }
-  @ApiOperation({ summary: 'busca de todos os produto' })
+    await createProductService.createNewProduct(data, urlImg, req.user.role);
+  } 
 
+  @ApiOperation({ summary: 'busca de todos os produto' })
   /**
    * @route GET /products/all
    * @description Retorna a lista de todos os produtos cadastrados
