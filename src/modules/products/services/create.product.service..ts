@@ -40,7 +40,7 @@ export class CreateProductService {
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto, role: Role): Promise<void> {
+  async createNewProduct(data: CreateProductDto, urlImage:string, role: Role): Promise<void> {
 
 
     if(role !== Role.ADMIN){
@@ -51,10 +51,7 @@ export class CreateProductService {
     await this.verifyExistsIds(data.modelId, data.fornecedorId, data.categoryId);
 
     // Cria o produto no banco de dados
-    const product = await this.productRepository.createNewProduct(data);
-
-    // Cria as relações entre o produto e os modelos/fornecedores
-    // await this.createRelationsProduct(data.modelId, data.fornecedorId, product.id);
+    await this.productRepository.createNewProduct(data, urlImage);
 
   }
 
@@ -95,19 +92,5 @@ export class CreateProductService {
     );
   }
 
-  /**
-   * Método responsável por criar as relações do produto com os modelos e fornecedores.
-   * 
-   * @param idsModels Lista de IDs dos modelos a serem relacionados ao produto.
-   * @param idsFornecedores Lista de IDs dos fornecedores a serem relacionados ao produto.
-   * @param idProduct ID do produto recém-criado.
-   */
-  // private async createRelationsProduct(idsModels: number[], idsFornecedores: number[], idProduct: number): Promise<void> {
-    
-  //   // Cria a relação Produto <-> Modelos
-  //   await Promise.all(idsModels.map(id => this.productModel.createRelation(idProduct, id)));
 
-  //   // Cria a relação Produto <-> Fornecedores
-  //   await Promise.all(idsFornecedores.map(id => this.productFornecedor.createRelation(idProduct, id)));
-  // }
 }

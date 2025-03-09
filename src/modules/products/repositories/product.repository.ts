@@ -16,7 +16,7 @@ import { filter } from 'rxjs';
 export class ProductRepository {
   constructor(@Inject() private prismaService: PrismaService) {}
 
-  async createNewProduct(data: CreateProductDto): Promise<Product> {
+  async createNewProduct(data: CreateProductDto, urlImage:string): Promise<Product> {
     return await this.prismaService.product.create({
       data: {
         name: data.name,
@@ -25,6 +25,7 @@ export class ProductRepository {
         price: data.price,
         priceoast: data.priceoast,
         tipo: data.tipo,
+        imageUrl: urlImage,
         category:{
           connect:{id:data.categoryId}
         },

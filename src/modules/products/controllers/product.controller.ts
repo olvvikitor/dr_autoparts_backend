@@ -1,15 +1,36 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseFilePipeBuilder,
+  Post,
+  Put,
+  Query,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { ModuleRef } from '@nestjs/core';
 import { GetAllProductService } from '../services/getAll.product.service';
 import { GetProductByIdService } from '../services/getById.product.service';
 import { GetProductsService } from '../services/getByNome.product.service';
 import { CreateProductService } from '../services/create.product.service.';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { MRequest } from 'src/shared/infra/http/MRequest';
 import { UpdateProductService } from '../services/update.product.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductController {
@@ -22,8 +43,19 @@ export class ProductController {
    * @returns {Promise<void>}
    */
   @UseGuards(AuthGuard)
-  @ApiBody({type:CreateProductDto})
-  @ApiOperation({summary: 'Criação de um novo produto'})
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateProductDto,
+
+    description:
+      'Dados do produto e arquivo de imagem (se presente). Requisição deve ser do tipo multipart/form-data.',
+    required: true, // Define que o corpo deve ser preenchido
+  },)
+  @ApiOperation({
+    summary:
+      'Criação de um novo produto com a possibilidade de upload de uma imagem',
+  })
+  
   @ApiBearerAuth()
   @ApiResponse({
     status: 401,
@@ -40,7 +72,8 @@ export class ProductController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Acesso negado - O usuário não tem permissão para acessar este recurso',
+    description:
+      'Acesso negado - O usuário não tem permissão para acessar este recurso',
     content: {
       'application/json': {
         example: {
@@ -53,12 +86,14 @@ export class ProductController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Recurso não encontrado',
+    description:
+      'Recurso não encontrado - Categoria, Modelo ou Fornecedor não encontrado',
     content: {
       'application/json': {
         example: {
           statusCode: 404,
-          message: 'Categoria não encontrada | Modelo não encontrado | Fornecedor não encontrado',
+          message:
+            'Categoria não encontrada | Modelo não encontrado | Fornecedor não encontrado',
           error: 'Not Found',
         },
       },
@@ -71,18 +106,49 @@ export class ProductController {
       'application/json': {
         example: {
           statusCode: 201,
-          message: 'Criado com sucesso'
+          message: 'Criado com sucesso',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Erro no processamento do arquivo - Tipo de arquivo inválido ou arquivo não enviado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 422,
+          message: 'Arquivo inválido ou não enviado',
+          error: 'Unprocessable Entity',
         },
       },
     },
   })
   @Post('new')
-  async createNewProduct(@Body() data: CreateProductDto, @Req() req: any): Promise<void> {
-    const createProductService: CreateProductService = this.modulesRefs.get(CreateProductService);
-    await createProductService.createNewProduct(data, req.user.role);
-  }
-  @ApiOperation({summary:'busca de todos os produto'})
+  @UseInterceptors(FileInterceptor('image'))
+  async createNewProduct(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'png',
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
+        }),
+    )
+    image: Express.Multer.File,
+    @Body() data: CreateProductDto,
+    @Req() req: any,
+  ): Promise<void> {
+    const urlImg = image ? (image as any).location || image.path : null;
+    const createProductService: CreateProductService =
+      this.modulesRefs.get(CreateProductService);
+    await createProductService.createNewProduct(data, urlImg, req.user.role);
+  } 
 
+  @ApiOperation({ summary: 'busca de todos os produto' })
   /**
    * @route GET /products/all
    * @description Retorna a lista de todos os produtos cadastrados
@@ -90,7 +156,7 @@ export class ProductController {
    */
   @ApiResponse({
     status: 200,
-    type:[ResponseProductDto],
+    type: [ResponseProductDto],
     description: 'Produtos carregados com sucesso',
     content: {
       'application/json': {
@@ -113,11 +179,10 @@ export class ProductController {
    * @param {string} id - ID do produto a ser buscado
    * @returns {Promise<any>} Produto correspondente ao ID informado
    */
-  @ApiOperation({summary:'busca de produto por id'})
-
+  @ApiOperation({ summary: 'busca de produto por id' })
   @ApiResponse({
     status: 200,
-    type:ResponseProductDto,
+    type: ResponseProductDto,
     description: 'Produto carregados com sucesso',
     content: {
       'application/json': {
@@ -152,11 +217,12 @@ export class ProductController {
    * @param {string} filter - Termo para buscar produtos
    * @returns {Promise<Array<ResponseProductDto>>} Lista de produtos que correspondem ao filtro
    */
-  @ApiOperation({summary:'Busca de produto por nome de qualquer relacionamento'})
-
+  @ApiOperation({
+    summary: 'Busca de produto por nome de qualquer relacionamento',
+  })
   @ApiResponse({
     status: 200,
-    type:[ResponseProductDto],
+    type: [ResponseProductDto],
     description: 'Produto carregados com sucesso',
     content: {
       'application/json': {
@@ -180,13 +246,14 @@ export class ProductController {
     },
   })
   @Get('/')
-  async getProduct(@Query('filter') filter: string): Promise<Array<ResponseProductDto>> {
+  async getProduct(
+    @Query('filter') filter: string,
+  ): Promise<Array<ResponseProductDto>> {
     const getProductService = this.modulesRefs.get(GetProductsService);
     return await getProductService.execute(filter);
   }
 
-
-    /**
+  /**
    * @route PUT /product/update/{id}
    * @description Edita um produto no sistema
    * @param {CreateProductDto} data - Dados do produto a ser criado
@@ -194,8 +261,8 @@ export class ProductController {
    * @returns {Promise<void>}
    */
   @UseGuards(AuthGuard)
-  @ApiOperation({summary:'Update de produto'})
-  @ApiBody({type:CreateProductDto})
+  @ApiOperation({ summary: 'Update de produto' })
+  @ApiBody({ type: CreateProductDto })
   @ApiBearerAuth()
   @ApiResponse({
     status: 401,
@@ -212,7 +279,8 @@ export class ProductController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Acesso negado - O usuário não tem permissão para acessar este recurso',
+    description:
+      'Acesso negado - O usuário não tem permissão para acessar este recurso',
     content: {
       'application/json': {
         example: {
@@ -230,7 +298,8 @@ export class ProductController {
       'application/json': {
         example: {
           statusCode: 404,
-          message: 'Categoria não encontrada | Modelo não encontrado | Fornecedor não encontrado | Produto não encontrado',
+          message:
+            'Categoria não encontrada | Modelo não encontrado | Fornecedor não encontrado | Produto não encontrado',
           error: 'Not Found',
         },
       },
@@ -243,14 +312,22 @@ export class ProductController {
       'application/json': {
         example: {
           statusCode: 201,
-          message: 'Editado com sucesso'
+          message: 'Editado com sucesso',
         },
       },
     },
   })
   @Put('update/:id')
-  async updateProduct(@Param('id') id:string,@Body() data: CreateProductDto, @Req() req: MRequest):Promise<void>{
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() data: CreateProductDto,
+    @Req() req: MRequest,
+  ): Promise<void> {
     const updateProductService = this.modulesRefs.get(UpdateProductService);
-    return await updateProductService.execute(parseInt(id),data, req.user.role);
+    return await updateProductService.execute(
+      parseInt(id),
+      data,
+      req.user.role,
+    );
   }
 }
