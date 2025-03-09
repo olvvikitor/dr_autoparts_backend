@@ -13,6 +13,7 @@ import { ProductFornecedorModule } from '../productFornecedor/productFornecedor.
 import { GetProductsService } from './services/getByNome.product.service';
 import AuthModule from 'src/shared/auth/authGuard.module';
 import { UpdateProductService } from './services/update.product.service';
+import { StorageModule } from 'src/shared/providers/storages/StorageModule';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UpdateProductService } from './services/update.product.service';
     FornecedorModule,
     ProductModelModule,
     ProductFornecedorModule,
+    StorageModule,
   ],
   providers: [
     ProductRepository,
