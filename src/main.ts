@@ -5,11 +5,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './shared/filters/HttpException.filter';
 import * as express from 'express'
 import { join } from 'path';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1')
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
-
+  app.enableCors()
   app.useGlobalPipes(new ValidationPipe({
     transform:true
   }));

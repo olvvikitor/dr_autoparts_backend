@@ -2,25 +2,26 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Post,
+  Put,
+  Delete,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CreateCategoryDto } from '../dto/create-category-dto';
 import { CategoryService } from '../services/category.service';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { CreateFornecedorDto } from 'src/modules/fornecedor/dto/create-fornecedor-dto';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { ResponseCategoryDto } from '../dto/response-category.dto';
-import { Request } from 'express';
 import { MRequest } from 'src/shared/infra/http/MRequest';
 
+@ApiTags('Categories')
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
+  @ApiOperation({ summary: 'Cria uma nova categoria' })
+  @ApiBearerAuth()
   @ApiBody({ type: CreateCategoryDto })
   @ApiResponse({
     status: 401,
@@ -37,8 +38,7 @@ export class CategoryController {
   })
   @ApiResponse({
     status: 403,
-    description:
-      'Acesso negado - O usuário não tem permissão para acessar este recurso',
+    description: 'Acesso negado - O usuário não tem permissão para acessar este recurso',
     content: {
       'application/json': {
         example: {
@@ -56,7 +56,7 @@ export class CategoryController {
       'application/json': {
         example: {
           statusCode: 409,
-          message: 'Categoria já encontrado',
+          message: 'Categoria já encontrada',
           error: 'Conflict',
         },
       },
@@ -64,7 +64,7 @@ export class CategoryController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Categoria criado com sucesso',
+    description: 'Categoria criada com sucesso',
     content: {
       'application/json': {
         example: {
@@ -83,14 +83,15 @@ export class CategoryController {
     return await this.categoryService.createNewCategory(data, req.user.role);
   }
 
+  @ApiOperation({ summary: 'Busca uma categoria por ID' })
   @ApiResponse({
     status: 404,
-    description: 'Catergoria não encontrada',
+    description: 'Categoria não encontrada',
     content: {
       'application/json': {
         example: {
           statusCode: 404,
-          message: 'Categoria já encontrado',
+          message: 'Categoria não encontrada',
           error: 'NotFound',
         },
       },
@@ -100,27 +101,22 @@ export class CategoryController {
     status: 200,
     type: ResponseCategoryDto,
     description: 'Sucesso',
-    content: {
-      'application/json': {
-        example: {
-          statusCode: 201,
-          message: 'Success!',
-        },
-      },
-    },
   })
   @Get('/:id')
   async findById(@Param('id') id: string): Promise<ResponseCategoryDto> {
     return this.categoryService.findCategoryById(parseInt(id));
   }
+
+
+  @ApiOperation({ summary: 'Busca uma categoria por Nome' })
   @ApiResponse({
     status: 404,
-    description: 'Catergoria não encontrada',
+    description: 'Categoria não encontrada',
     content: {
       'application/json': {
         example: {
           statusCode: 404,
-          message: 'Categoria não encontrado',
+          message: 'Categoria não encontrada',
           error: 'NotFound',
         },
       },
@@ -130,48 +126,66 @@ export class CategoryController {
     status: 200,
     type: ResponseCategoryDto,
     description: 'Sucesso',
-    content: {
-      'application/json': {
-        example: {
-          statusCode: 201,
-          message: 'Success!',
-        },
-      },
-    },
   })
   @Get('/:name')
   async findByName(@Param('name') name: string): Promise<ResponseCategoryDto> {
     return this.categoryService.findCategoryByName(name);
   }
 
+  @ApiBody({ type: CreateCategoryDto })
+  @ApiOperation({ summary: 'Busca todas as categoria' })
+  @ApiResponse({
+    status: 200,
+    type: [ResponseCategoryDto],
+    description: 'Lista de categorias',
+  })
+  @Get()
+  async findAll(): Promise<ResponseCategoryDto[]> {
+    return await this.categoryService.findAll();
+  }
+  @ApiOperation({ summary: 'Atualiza uma categoria por Id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categoria atualizada com sucesso',
+  })
   @ApiResponse({
     status: 404,
-    description: 'Catergoria não encontrada',
+    description: 'Categoria não encontrada',
     content: {
       'application/json': {
         example: {
           statusCode: 404,
-          message: 'Categoria já encontrado',
+          message: 'Categoria não encontrada',
           error: 'NotFound',
         },
       },
     },
   })
+  @Put('/:id')
+  async update(@Param('id') id: string, @Body() data: CreateCategoryDto): Promise<void> {
+    return await this.categoryService.update(parseInt(id), data);
+  }
+
+  @ApiOperation({ summary: 'Deleta uma categoria por Id' })
   @ApiResponse({
     status: 200,
-    type: [ResponseCategoryDto],
-    description: 'Sucesso',
+    description: 'Categoria excluída com sucesso',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoria não encontrada',
     content: {
       'application/json': {
         example: {
-          statusCode: 201,
-          message: 'Success!',
+          statusCode: 404,
+          message: 'Categoria não encontrada',
+          error: 'NotFound',
         },
       },
     },
   })
-  @Get()
-  async findAll(): Promise<ResponseCategoryDto[]> {
-    return await this.categoryService.findAll();
+  @Delete('/:id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.categoryService.delete(parseInt(id));
   }
 }

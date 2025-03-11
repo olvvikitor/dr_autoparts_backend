@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateModeloDto {
+export class Response {
   @ApiProperty({
     example: 'Civic',
     description: 'Nome do modelo do veículo',

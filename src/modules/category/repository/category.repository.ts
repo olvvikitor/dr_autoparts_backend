@@ -5,13 +5,9 @@ import { ResponseCategoryDto } from '../dto/response-category.dto';
 import { Category } from '@prisma/client';
 
 export class CategoryRepository {
-  
-   constructor (@Inject() private prismaService:PrismaService) {
-    }
-  
+  constructor(@Inject() private prismaService: PrismaService) {}
 
   async create(data: CreateCategoryDto): Promise<void> {
-
     await this.prismaService.category.create({
       data: { name: data.nome },
     });
@@ -28,7 +24,24 @@ export class CategoryRepository {
     });
   }
 
-  async findAll():Promise<Category[]>{
-    return await this.prismaService.category.findMany()
+  async findAll(): Promise<Category[]> {
+    return await this.prismaService.category.findMany();
+  }
+  async update(id: number, data: CreateCategoryDto): Promise<void> {
+    await this.prismaService.category.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...data,
+      },
+    });
+  }
+  async delete(id: number): Promise<void> {
+    await this.prismaService.category.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

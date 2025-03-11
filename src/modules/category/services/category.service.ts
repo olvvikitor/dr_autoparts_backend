@@ -48,4 +48,10 @@ export class CategoryService {
   async findAll():Promise<Category[]>{
     return await this.categoryRepository.findAll()
   }
+  async update(id:number, data:CreateCategoryDto):Promise<void>{
+    return await this.categoryRepository.update(id, data);
+  }
+  async delete(id:number):Promise<void>{
+    return await this.categoryRepository.delete(id);
+  }
 }
