@@ -1,11 +1,14 @@
 import { 
-  Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards
+  Body, Controller, Delete, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards
 } from '@nestjs/common';
 import { CreateFornecedorDto } from '../dto/create-fornecedor-dto';
 import { FornecedorService } from '../services/fornecedor.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { ResponseFornecedorDto } from '../dto/response-fornecedor.dto';
+import { Request } from 'express';
+import { MRequest } from 'src/shared/infra/http/MRequest';
+import { Role } from 'src/modules/users/entities/enums/role.enum';
 
 @ApiTags('Fornecedor')
 @Controller('fornecedor')
@@ -21,7 +24,11 @@ export class FornecedorController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('new')
-  async createNewFornecedor(@Body() data: CreateFornecedorDto) {
+  async createNewFornecedor(@Body() data: CreateFornecedorDto, @Req() req:MRequest) {
+    const role = req.user.role 
+    if(role !== Role.ADMIN){
+      throw new ForbiddenException('Usuario não autorizado!')
+    }
     return await this.fornecedorService.createNewFornecedor(data);
   }
 

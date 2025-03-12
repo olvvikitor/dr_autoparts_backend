@@ -1,19 +1,26 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
-import { Category, Fornecedor } from '@prisma/client';
+import { Fornecedor } from '@prisma/client';
 import { CreateFornecedorDto } from '../dto/create-fornecedor-dto';
+import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
 
 @Injectable()
 export class FornecedorService {
   constructor(@Inject() private prismaService: PrismaService) {}
 
   async createNewFornecedor(data: CreateFornecedorDto): Promise<void> {
-    const categoryExist = await this.findFornecedorByCode(data.nome);
-    if (categoryExist) {
+    const fornecedorExists = await this.prismaService.fornecedor.findFirst({
+      where: {
+        OR: [{ name: data.nome }, { code: data.code }],
+      },
+    });
+
+    if (fornecedorExists) {
       throw new ConflictException(
-        'Já existe um fornecedor com esse código cadastrado',
+        'Já existe um fornecedor com esse nome ou código cadastrado',
       );
     }
+
     await this.prismaService.fornecedor.create({
       data: {
         code: data.code,
@@ -22,11 +29,26 @@ export class FornecedorService {
     });
   }
   async update(id: number, data: CreateFornecedorDto): Promise<void> {
-    const categoryExist = await this.findFornecedorByCode(data.nome);
 
-    if (categoryExist) {
+    const fornecedor = await this.prismaService.fornecedor.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!fornecedor) {
+      throw new NotFoundExceptionHandler('Fornecedor', 'id', id);
+    }
+
+    const fornecedorExists = await this.prismaService.fornecedor.findFirst({
+      where: {
+        OR: [{ name: data.nome }, { code: data.code }],
+      },
+    });
+
+    if (fornecedorExists) {
       throw new ConflictException(
-        'Já existe um fornecedor com esse código cadastrado',
+        'Já existe existe um fornecedor com esse código ou nome cadastrado',
       );
     }
 
@@ -40,29 +62,60 @@ export class FornecedorService {
   }
 
   async findFornecedorByCode(code: string): Promise<Fornecedor> {
-    return await this.prismaService.fornecedor.findFirst({
-      where: { name: code },
+    const fornecedor = await this.prismaService.fornecedor.findFirst({
+      where: {
+        code: code,
+      },
     });
+
+    if (!fornecedor) {
+      throw new NotFoundExceptionHandler('Fornecedor', 'code', code);
+    }
+    return fornecedor
+
   }
   async findFornecedorById(id: number): Promise<Fornecedor> {
-    return await this.prismaService.fornecedor.findFirst({
-      where: { id: id },
+    const fornecedor = await this.prismaService.fornecedor.findFirst({
+      where: {
+        id: id,
+      },
     });
+
+    if (!fornecedor) {
+      throw new NotFoundExceptionHandler('Fornecedor', 'id', id);
+    }
+    return fornecedor
   }
   async findFornecedorByName(name: string): Promise<Fornecedor> {
-    return await this.prismaService.fornecedor.findFirst({
-      where: { name: name },
+    const fornecedor = await this.prismaService.fornecedor.findFirst({
+      where: {
+        name: name,
+      },
     });
+
+    if (!fornecedor) {
+      throw new NotFoundExceptionHandler('Fornecedor', 'name', name);
+    }
+    return fornecedor
   }
 
   async findFornecedores(): Promise<Array<Fornecedor>> {
     return await this.prismaService.fornecedor.findMany();
   }
   async deleteById(id: number): Promise<void> {
-    await this.prismaService.fornecedor.delete({
+    const fornecedor = await this.prismaService.fornecedor.findFirst({
       where: {
         id: id,
       },
     });
+
+    if (!fornecedor) {
+      throw new NotFoundExceptionHandler('Fornecedor', 'name', name);
+    }
+    await this.prismaService.fornecedor.delete({
+      where:{
+        id
+      }
+    })
   }
 }
