@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CartModule } from './modules/cart/cart.module';
 import { CartItemModule } from './modules/cartItem/cartItem.module';
 import AuthModule from './shared/auth/authGuard.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 
 @Global()
@@ -17,7 +18,8 @@ import AuthModule from './shared/auth/authGuard.module';
     UserModule,
     CartModule,
     CartItemModule,
-    AuthModule,
+    AdminModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],

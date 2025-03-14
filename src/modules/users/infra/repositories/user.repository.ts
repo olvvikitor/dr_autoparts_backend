@@ -9,8 +9,41 @@ import { Result } from '@prisma/client/runtime/library';
 export class UserRepository implements IUserRepository {
   constructor(@Inject() private prismaService: PrismaService) {}
 
-  findUserById(id: number): Promise<User> {
-    throw new Error('Method not implemented.');
+  async findUserById(id: number): Promise<User> {
+    return await this.prismaService.user.findFirst({
+      where: {
+        id
+      }
+    })
+  }
+  async updateAccess(id:number, ultimoAcesso: Date):Promise<void>{
+    await this.prismaService.user.update({
+      where: {
+        id
+      },
+      data:{
+        ultimo_acesso:ultimoAcesso
+      }
+    })
+  }
+
+  async update(id: number, data:CreateUserDto):Promise<void>{
+    await this.prismaService.user.update({
+      where:{id: id},
+      data:{
+        ...data,
+        endereco: {
+          update:{
+            ...data.endereco
+          },
+        },
+        contato: {
+          update:{
+            ...data.contato
+          }
+        }
+      }
+    })
   }
 
   async findByUserByCpf(cpf: string): Promise<User | null> {

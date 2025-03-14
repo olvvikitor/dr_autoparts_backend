@@ -35,6 +35,19 @@ model Category {
   products Product[] // Relacionamento 1:N com Product
 }
 
+model Administrator{
+  id Int @id @default(autoincrement())
+  name String 
+  login String @unique
+  password String
+  role Role
+}
+model Acessos{
+  id Int @id @default(autoincrement())
+  usuario String
+  tipo_usuario Role
+  data_acesso DateTime
+}
 model Model {
   id       Int            @id @default(autoincrement())
   name     String
@@ -75,6 +88,7 @@ model User {
   password   String
   orders     Order[]
   carts      Cart[]
+  ultimo_acesso DateTime?
   created_at DateTime  @default(now())
   updated_at DateTime?
 

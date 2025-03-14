@@ -6,7 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { User } from '@prisma/client';
+import * as moment from 'moment';
+
 
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../entities/dtos/login-user.dto';
@@ -31,7 +32,11 @@ export class LoginUserService {
     const hashedPassword = user.password as string;
 
     if (await this.decryptPassword(data.password, hashedPassword)) {
-      const payload = { id: user.id, nome: user.name, role: user.role, idEndereco: user.enderecoId, idContato: user.contatoId};
+      let ultimo_acesso  = Date.now()
+      const acesso = (moment(ultimo_acesso)).toDate()
+      await this.userRepository.updateAccess(user.id, acesso)
+      
+      const payload = { id: user.id, nome: user.name, idEndereco: user.enderecoId, idContato: user.contatoId};
       return {
         token: await this.jwtService.signAsync(payload),
       };
