@@ -11,6 +11,8 @@ import { MRequest } from 'src/shared/infra/http/MRequest';
 import { Role } from 'src/modules/users/entities/enums/role.enum';
 
 @ApiTags('Fornecedor')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('fornecedor')
 export class FornecedorController {
   constructor(private fornecedorService: FornecedorService) {}
@@ -21,8 +23,6 @@ export class FornecedorController {
   @ApiResponse({ status: 409, description: 'Fornecedor já existe com esse nome' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Acesso negado' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @Post('new')
   async createNewFornecedor(@Body() data: CreateFornecedorDto, @Req() req:MRequest) {
     const role = req.user.role 
@@ -64,8 +64,6 @@ export class FornecedorController {
   }
 
   @ApiOperation({ summary: 'Atualiza um fornecedor pelo ID' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Fornecedor atualizado com sucesso' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
@@ -76,8 +74,7 @@ export class FornecedorController {
   }
 
   @ApiOperation({ summary: 'Exclui um fornecedor pelo ID' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+
   @ApiResponse({ status: 200, description: 'Fornecedor excluído com sucesso' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })

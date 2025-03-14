@@ -16,6 +16,9 @@ import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { ResponseCategoryDto } from '../dto/response-category.dto';
 import { MRequest } from 'src/shared/infra/http/MRequest';
 
+
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @ApiTags('Categories')
 @Controller('category')
 export class CategoryController {
@@ -74,7 +77,6 @@ export class CategoryController {
       },
     },
   })
-  @UseGuards(AuthGuard)
   @Post('new')
   async createNewCategory(
     @Body() data: CreateCategoryDto,

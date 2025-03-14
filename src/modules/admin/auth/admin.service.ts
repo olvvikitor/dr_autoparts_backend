@@ -1,6 +1,6 @@
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
-import { AdminRepository } from './admin.repository';
-import { LoginAdminDto } from './dtos/loginAdmin.dto';
+import { AdminRepository } from '../repository/admin.repository';
+import { LoginAdminDto } from '../dtos/loginAdmin.dto';
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -26,9 +26,12 @@ export class AdminService{
       throw new UnauthorizedException('Verifique o login e a senha informada e tente novamente')
     }
 
+
+
     const payload = {
-      name:admin.name, role: admin.role, 
+      name:admin.name, role: admin.role, id:admin.id
     }
+
     return {
       token: await this.jwtService.signAsync(payload),
     }

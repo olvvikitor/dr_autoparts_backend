@@ -23,11 +23,7 @@ export class UpdateProductService {
   //O método de editar produto, recebe os parametros informados.
   //ATENÇÃO: PASSAR NO CORPO DA REQUISIÇÃO OS FORNECEDORES E MODELOS QUE JÁ TINHA ANTES
   //POIS QUANDO EDITA UM PRODUTO<O METODO REMOVE TODOS E ADICIONA OS QUE VEM NO CORPO
-  async execute(idProduct: number, data: CreateProductDto, role:Role): Promise<void> {
-
-    if(role !== Role.ADMIN){
-      throw new ForbiddenException('Usuário com perfil inválido')
-    }
+  async execute(idProduct: number, data: CreateProductDto): Promise<void> {
 
     await this.verifyExistsIds(
       data.modelId,

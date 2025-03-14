@@ -40,12 +40,9 @@ export class CreateProductService {
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto, urlImage:string, role: Role): Promise<void> {
+  async createNewProduct(data: CreateProductDto, urlImage:string): Promise<void> {
 
 
-    if(role !== Role.ADMIN){
-      throw new ForbiddenException('Usuário com perfil inválido')
-    }
     
     // Verifica se os IDs de modelo, fornecedor e categoria existem
     await this.verifyExistsIds(data.modelId, data.fornecedorId, data.categoryId);

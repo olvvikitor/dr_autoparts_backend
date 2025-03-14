@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpStatus,
   Param,
@@ -31,7 +32,11 @@ import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { MRequest } from 'src/shared/infra/http/MRequest';
 import { UpdateProductService } from '../services/update.product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Role } from '@prisma/client';
 
+
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('products')
 export class ProductController {
   constructor(private modulesRefs: ModuleRef) {}
@@ -42,7 +47,6 @@ export class ProductController {
    * @param {CreateProductDto} data - Dados do produto a ser criado
    * @returns {Promise<void>}
    */
-  @UseGuards(AuthGuard)
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     type: CreateProductDto,
@@ -56,7 +60,6 @@ export class ProductController {
       'Criação de um novo produto com a possibilidade de upload de uma imagem',
   })
   
-  @ApiBearerAuth()
   @ApiResponse({
     status: 401,
     description: 'Não autenticado - O usuário precisa estar autenticado',
@@ -140,12 +143,19 @@ export class ProductController {
     )
     image: Express.Multer.File,
     @Body() data: CreateProductDto,
-    @Req() req: any,
+    @Req() req: MRequest,
   ): Promise<void> {
+
     const urlImg = image ? (image as any).location || image.path : null;
     const createProductService: CreateProductService =
       this.modulesRefs.get(CreateProductService);
-    await createProductService.createNewProduct(data, urlImg, req.user.role);
+
+    
+      if(req.user.role !== Role.ADMIN){
+        throw new ForbiddenException('Usuário com perfil inválido')
+      }
+
+    await createProductService.createNewProduct(data, urlImg);
   } 
 
   @ApiOperation({ summary: 'busca de todos os produto' })
@@ -263,7 +273,6 @@ export class ProductController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update de produto' })
   @ApiBody({ type: CreateProductDto })
-  @ApiBearerAuth()
   @ApiResponse({
     status: 401,
     description: 'Não autenticado - O usuário precisa estar autenticado',
@@ -324,10 +333,14 @@ export class ProductController {
     @Req() req: MRequest,
   ): Promise<void> {
     const updateProductService = this.modulesRefs.get(UpdateProductService);
+
+    if(req.user.role !== Role.ADMIN){
+      throw new ForbiddenException('Usuário com perfil inválido')
+    }
+
     return await updateProductService.execute(
       parseInt(id),
-      data,
-      req.user.role,
+      data
     );
   }
 }

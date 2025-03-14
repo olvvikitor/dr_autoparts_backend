@@ -15,14 +15,14 @@ import { Model } from '@prisma/client';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 
 @ApiTags('Modelos') 
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('modelo')
 export class ModeloController {
 
   constructor(private modeloService: ModeloService) {}
 
   @Post('new')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard) 
   @ApiOperation({ summary: 'Cria um novo modelo' })
   @ApiResponse({ status: 201, description: 'Modelo criado com sucesso' })
   @ApiBody({ type: CreateModeloDto })
@@ -54,8 +54,6 @@ export class ModeloController {
   }
 
   @Put('/:id')
-  @ApiBearerAuth() 
-  @UseGuards(AuthGuard) 
   @ApiOperation({ summary: 'Atualiza um modelo' })
   @ApiParam({ name: 'id', example: '1', description: 'ID do modelo' })
   @ApiBody({ type: CreateModeloDto })
@@ -65,8 +63,6 @@ export class ModeloController {
   }
 
   @Delete('/:id')
-  @ApiBearerAuth() 
-  @UseGuards(AuthGuard) 
   @ApiOperation({ summary: 'Exclui um modelo' })
   @ApiParam({ name: 'id', example: '1', description: 'ID do modelo' })
   @ApiResponse({ status: 200, description: 'Modelo excluído com sucesso' })
