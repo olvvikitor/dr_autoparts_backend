@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
         imports: [ConfigModule], // Importa o módulo de configuração
         useFactory: async (configService: ConfigService) => ({
             secret: configService.get<string>('JWT_SECRET'), // Obtém o segredo do arquivo de configuração
-            signOptions: { expiresIn: '24h' }, // Tempo de expiração configurável
+            signOptions: { expiresIn: '7d' }, // Tempo de expiração configurável
         }),
         inject: [ConfigService], // Injeta o serviço de configuração
     })],

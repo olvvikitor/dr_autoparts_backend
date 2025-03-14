@@ -12,8 +12,8 @@ import { AuthController } from './infra/controllers/login.controller';
 @Module({
   imports: [PrismaModule,AuthModule
   ],
-  providers: [UserRepository, CreateUserService, LoginUserService],
   controllers: [UserController, AuthController],
+  providers: [UserRepository, CreateUserService, LoginUserService],
   exports: [UserRepository, CreateUserService]
 })
 export class UserModule {

@@ -1,13 +1,18 @@
 import { 
-  Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards
+  Body, Controller, Delete, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards
 } from '@nestjs/common';
 import { CreateFornecedorDto } from '../dto/create-fornecedor-dto';
 import { FornecedorService } from '../services/fornecedor.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
 import { ResponseFornecedorDto } from '../dto/response-fornecedor.dto';
+import { Request } from 'express';
+import { MRequest } from 'src/shared/infra/http/MRequest';
+import { Role } from 'src/modules/users/entities/enums/role.enum';
 
 @ApiTags('Fornecedor')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('fornecedor')
 export class FornecedorController {
   constructor(private fornecedorService: FornecedorService) {}
@@ -18,10 +23,12 @@ export class FornecedorController {
   @ApiResponse({ status: 409, description: 'Fornecedor já existe com esse nome' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Acesso negado' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @Post('new')
-  async createNewFornecedor(@Body() data: CreateFornecedorDto) {
+  async createNewFornecedor(@Body() data: CreateFornecedorDto, @Req() req:MRequest) {
+    const role = req.user.role 
+    if(role !== Role.ADMIN){
+      throw new ForbiddenException('Usuario não autorizado!')
+    }
     return await this.fornecedorService.createNewFornecedor(data);
   }
 
@@ -57,8 +64,6 @@ export class FornecedorController {
   }
 
   @ApiOperation({ summary: 'Atualiza um fornecedor pelo ID' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Fornecedor atualizado com sucesso' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
@@ -69,8 +74,7 @@ export class FornecedorController {
   }
 
   @ApiOperation({ summary: 'Exclui um fornecedor pelo ID' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+
   @ApiResponse({ status: 200, description: 'Fornecedor excluído com sucesso' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
