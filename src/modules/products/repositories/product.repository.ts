@@ -148,6 +148,11 @@ export class ProductRepository {
         productId: id
       }
     })
+    await this.prismaService.productModel.deleteMany({
+      where:{
+        productId:id
+      }
+    })
 
     await this.prismaService.product.update({
       where: {

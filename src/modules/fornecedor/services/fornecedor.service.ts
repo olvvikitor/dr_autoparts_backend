@@ -29,7 +29,6 @@ export class FornecedorService {
     });
   }
   async update(id: number, data: CreateFornecedorDto): Promise<void> {
-
     const fornecedor = await this.prismaService.fornecedor.findFirst({
       where: {
         id: id,
@@ -43,6 +42,7 @@ export class FornecedorService {
     const fornecedorExists = await this.prismaService.fornecedor.findFirst({
       where: {
         OR: [{ name: data.nome }, { code: data.code }],
+        AND: { NOT: { id: id } },
       },
     });
 
@@ -71,8 +71,7 @@ export class FornecedorService {
     if (!fornecedor) {
       throw new NotFoundExceptionHandler('Fornecedor', 'code', code);
     }
-    return fornecedor
-
+    return fornecedor;
   }
   async findFornecedorById(id: number): Promise<Fornecedor> {
     const fornecedor = await this.prismaService.fornecedor.findFirst({
@@ -84,7 +83,7 @@ export class FornecedorService {
     if (!fornecedor) {
       throw new NotFoundExceptionHandler('Fornecedor', 'id', id);
     }
-    return fornecedor
+    return fornecedor;
   }
   async findFornecedorByName(name: string): Promise<Fornecedor> {
     const fornecedor = await this.prismaService.fornecedor.findFirst({
@@ -96,7 +95,7 @@ export class FornecedorService {
     if (!fornecedor) {
       throw new NotFoundExceptionHandler('Fornecedor', 'name', name);
     }
-    return fornecedor
+    return fornecedor;
   }
 
   async findFornecedores(): Promise<Array<Fornecedor>> {
@@ -113,9 +112,9 @@ export class FornecedorService {
       throw new NotFoundExceptionHandler('Fornecedor', 'name', name);
     }
     await this.prismaService.fornecedor.delete({
-      where:{
-        id
-      }
-    })
+      where: {
+        id,
+      },
+    });
   }
 }
