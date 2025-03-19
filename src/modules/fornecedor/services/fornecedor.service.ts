@@ -101,6 +101,8 @@ export class FornecedorService {
   async findFornecedores(): Promise<Array<Fornecedor>> {
     return await this.prismaService.fornecedor.findMany({orderBy:{id:'asc'}});
   }
+
+  
   async deleteById(id: number): Promise<void> {
     const fornecedor = await this.prismaService.fornecedor.findFirst({
       where: {

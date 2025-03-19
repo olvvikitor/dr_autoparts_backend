@@ -9,7 +9,7 @@ export class CategoryRepository {
 
   async create(data: CreateCategoryDto): Promise<void> {
     await this.prismaService.category.create({
-      data: { name: data.nome },
+      data: { name: data.name },
     });
   }
 
@@ -25,7 +25,7 @@ export class CategoryRepository {
   }
 
   async findAll(): Promise<Category[]> {
-    return await this.prismaService.category.findMany();
+    return await this.prismaService.category.findMany({orderBy:{id:'asc'}});
   }
   async update(id: number, data: CreateCategoryDto): Promise<void> {
     await this.prismaService.category.update({

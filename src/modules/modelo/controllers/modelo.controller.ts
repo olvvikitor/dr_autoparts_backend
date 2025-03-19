@@ -6,13 +6,17 @@ import {
   Post, 
   Put, 
   Delete, 
-  UseGuards 
+  UseGuards, 
+  Req,
+  UnauthorizedException
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ModeloService } from '../services/modelo.service';
 import { CreateModeloDto } from '../dto/create-modelo-dto';
 import { Model } from '@prisma/client';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
+import { MRequest } from 'src/shared/infra/http/MRequest';
+import { Role } from 'src/modules/users/entities/enums/role.enum';
 
 @ApiTags('Modelos') 
 @UseGuards(AuthGuard)
@@ -26,14 +30,20 @@ export class ModeloController {
   @ApiOperation({ summary: 'Cria um novo modelo' })
   @ApiResponse({ status: 201, description: 'Modelo criado com sucesso' })
   @ApiBody({ type: CreateModeloDto })
-  async createNewCategory(@Body() data: CreateModeloDto) {
+  async createNewCategory(@Body() data: CreateModeloDto, @Req() req:MRequest) {
+    if(req.user.role !== Role.ADMIN){
+      throw new UnauthorizedException('Usuário sem permissão')
+    }
     return await this.modeloService.createNewModel(data);
   }
 
   @Get('')
   @ApiOperation({ summary: 'Lista todos os modelos' })
   @ApiResponse({ status: 200, description: 'Lista de modelos', type: [CreateModeloDto] })
-  async findAllModels(): Promise<Array<Model>> {
+  async findAllModels(@Req() req:MRequest): Promise<Array<Model>> {
+    if(req.user.role !== Role.ADMIN){
+      throw new UnauthorizedException('Usuário sem permissão')
+    }
     return await this.modeloService.findAllModels();
   }
 
@@ -41,7 +51,7 @@ export class ModeloController {
   @ApiOperation({ summary: 'Busca um modelo pelo ID' })
   @ApiParam({ name: 'id', example: '1', description: 'ID do modelo' })
   @ApiResponse({ status: 200, description: 'Detalhes do modelo', type: CreateModeloDto })
-  async findModelById(@Param('id') id: string): Promise<Model> {
+  async findModelById(@Param('id') id: string, @Req() req:MRequest): Promise<Model> {
     return await this.modeloService.findModelById(parseInt(id));
   }
 
@@ -49,7 +59,10 @@ export class ModeloController {
   @ApiOperation({ summary: 'Busca um modelo pelo nome' })
   @ApiParam({ name: 'name', example: 'Civic', description: 'Nome do modelo' })
   @ApiResponse({ status: 200, description: 'Detalhes do modelo', type: CreateModeloDto })
-  async findModelByName(@Param('name') name: string): Promise<Model> {
+  async findModelByName(@Param('name') name: string, @Req() req:MRequest): Promise<Model> {
+    if(req.user.role !== Role.ADMIN){
+      throw new UnauthorizedException('Usuário sem permissão')
+    }
     return await this.modeloService.findModelByNome(name);
   }
 
@@ -58,7 +71,10 @@ export class ModeloController {
   @ApiParam({ name: 'id', example: '1', description: 'ID do modelo' })
   @ApiBody({ type: CreateModeloDto })
   @ApiResponse({ status: 200, description: 'Modelo atualizado com sucesso' })
-  async updateModel(@Param('id') id: string, @Body() data: CreateModeloDto) {
+  async updateModel(@Param('id') id: string, @Body() data: CreateModeloDto, @Req() req:MRequest) {
+    if(req.user.role !== Role.ADMIN){
+      throw new UnauthorizedException('Usuário sem permissão')
+    }
     return await this.modeloService.updateModel(parseInt(id), data);
   }
 
@@ -66,7 +82,10 @@ export class ModeloController {
   @ApiOperation({ summary: 'Exclui um modelo' })
   @ApiParam({ name: 'id', example: '1', description: 'ID do modelo' })
   @ApiResponse({ status: 200, description: 'Modelo excluído com sucesso' })
-  async deleteModel(@Param('id') id: string) {
+  async deleteModel(@Param('id') id: string,@Req() req:MRequest) {
+    if(req.user.role !== Role.ADMIN){
+      throw new UnauthorizedException('Usuário sem permissão')
+    }
     return await this.modeloService.deleteModel(parseInt(id));
   }
 }
