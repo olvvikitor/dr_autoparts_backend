@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCategoryDto } from '../dto/create-category-dto';
 import { CategoryService } from '../services/category.service';
@@ -82,7 +83,11 @@ export class CategoryController {
     @Body() data: CreateCategoryDto,
     @Req() req: MRequest,
   ) {
-    return await this.categoryService.createNewCategory(data, req.user.role);
+        if(req.user.role !== 'ADMIN'){
+          throw new UnauthorizedException('Usuário sem permissão')
+        }
+    
+    return await this.categoryService.createNewCategory(data);
   }
 
   @ApiOperation({ summary: 'Busca uma categoria por ID' })
@@ -134,7 +139,6 @@ export class CategoryController {
     return this.categoryService.findCategoryByName(name);
   }
 
-  @ApiBody({ type: CreateCategoryDto })
   @ApiOperation({ summary: 'Busca todas as categoria' })
   @ApiResponse({
     status: 200,
@@ -164,7 +168,12 @@ export class CategoryController {
     },
   })
   @Put('/:id')
-  async update(@Param('id') id: string, @Body() data: CreateCategoryDto): Promise<void> {
+  async update(@Param('id') id: string, @Body() data: CreateCategoryDto, @Req() request:MRequest): Promise<void> {
+
+        if(request.user.role !== 'ADMIN'){
+          throw new UnauthorizedException('Usuário sem permissão.')
+        }
+    
     return await this.categoryService.update(parseInt(id), data);
   }
 

@@ -8,5 +8,5 @@ export class CreateCategoryDto{
   })
   @IsString()
   @IsNotEmpty()
-  nome: string
+  name: string
 }

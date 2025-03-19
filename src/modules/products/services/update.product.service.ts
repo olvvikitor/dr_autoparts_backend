@@ -16,8 +16,6 @@ export class UpdateProductService {
     @Inject() private categoryService: CategoryService,
     @Inject() private fornecedorService: FornecedorService,
     @Inject() private modeloService: ModeloService,
-    @Inject() private productModel: ProductModelRepository,
-    @Inject() private productFornecedor: ProductFornecedorRepository,
   ) {}
 
   //O método de editar produto, recebe os parametros informados.
@@ -32,42 +30,10 @@ export class UpdateProductService {
       idProduct,
     );
 
-    await this.updateRelationsProduct(
-      data.modelId,
-      data.fornecedorId,
-      idProduct,
-    );
 
     await this.productRepository.update(idProduct, data);
 
   }
-  /**
-   * Método responsável por editar as relações do produto com os modelos e fornecedores.
-   *
-   * @param idsModels Lista de IDs dos modelos a serem relacionados ao produto.
-   * @param idsFornecedores Lista de IDs dos fornecedores a serem relacionados ao produto.
-   * @param idProduct ID do produto
-   */
-  private async updateRelationsProduct(
-    idsModels: number[],
-    idsFornecedores: number[],
-    idProduct: number,
-  ): Promise<void> {
-    // Edita a relação Produto <-> Modelos
-    await this.productModel.delete(idProduct);
-    await Promise.all(
-      idsModels.map((id) => this.productModel.createRelation(idProduct, id)),
-    );
-
-    // Edita a relação Produto <-> Fornecedores
-    await this.productFornecedor.delete(idProduct);
-    await Promise.all(
-      idsFornecedores.map((id) =>
-        this.productFornecedor.createRelation(idProduct, id),
-      ),
-    );
-  }
-
   /**
    * Método responsável por verificar se os IDs informados existem no banco de dados.
    *

@@ -11,25 +11,22 @@ import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
 export class CategoryService {
   constructor(@Inject() private categoryRepository: CategoryRepository) {}
 
-  async createNewCategory(data: CreateCategoryDto, role:string): Promise<void> {
-    const categoryExist = await this.categoryRepository.findCategoryByName(data.nome);
-
-    if(role !== 'ADMIN'){
-      throw new UnauthorizedException
-    }
+  async createNewCategory(data: CreateCategoryDto): Promise<void> {
+    const categoryExist = await this.categoryRepository.findCategoryByName(data.name);
 
     if (categoryExist) {
-      throw new ConflictExceptions('Categoria', 'nome', data.nome);
+      throw new ConflictExceptions('Categoria', 'nome', data.name);
 
     }
     await this.categoryRepository.create(data);
+
   }
 
-  async findCategoryByName(nome: string): Promise<ResponseCategoryDto> {
-    const categoria = await this.categoryRepository.findCategoryByName(nome);
+  async findCategoryByName(name: string): Promise<ResponseCategoryDto> {
+    const categoria = await this.categoryRepository.findCategoryByName(name);
 
     if(!categoria){
-      throw new NotFoundExceptionHandler('Categoria', 'nome', nome)
+      throw new NotFoundExceptionHandler('Categoria', 'nome', name)
     }
     
     return categoria
@@ -49,7 +46,23 @@ export class CategoryService {
     return await this.categoryRepository.findAll()
   }
   async update(id:number, data:CreateCategoryDto):Promise<void>{
+
+    const categoryExist = await this.categoryRepository.findCategoryById(id);
+
+    if(!categoryExist){
+      throw new NotFoundExceptionHandler('Categoria', 'id', id)
+    }
+
+    const existsName = await this.categoryRepository.findCategoryByName(data.name)
+
+    if(existsName){
+      if(existsName.id !== id){
+        throw new ConflictExceptions('Category', 'name', data.name)
+      }
+    }
+
     return await this.categoryRepository.update(id, data);
+
   }
   async delete(id:number):Promise<void>{
     return await this.categoryRepository.delete(id);
