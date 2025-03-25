@@ -65,6 +65,7 @@ export class CategoryService {
 
   }
   async delete(id:number):Promise<void>{
+    
     return await this.categoryRepository.delete(id);
   }
 }
