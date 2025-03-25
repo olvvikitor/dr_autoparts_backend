@@ -3,12 +3,13 @@ import { PrismaModule } from 'src/shared/prisma/prisma.module';
 import { ModeloService } from './services/modelo.service';
 import { ModeloController } from './controllers/modelo.controller';
 import AuthModule from 'src/shared/auth/authGuard.module';
+import { ModelRepository } from './repository/model.repository';
 
 
 @Module({
   imports: [PrismaModule,AuthModule],
-  providers:[ModeloService],
   controllers:[ModeloController],    
-  exports:[ModeloService]
+  providers:[ModeloService, ModelRepository],
+  exports:[ModeloService, ModelRepository]
   })
 export class ModeloModule{}
