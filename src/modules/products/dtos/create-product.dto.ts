@@ -47,7 +47,6 @@ export class CreateProductDto {
     example: 69.27,
     required:false,
   })
-  @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   price: number;
 
@@ -56,7 +55,6 @@ export class CreateProductDto {
     example: 69.27,
     required:false,
   })
-  @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   priceoast: number; 
 
@@ -66,7 +64,6 @@ export class CreateProductDto {
     example: 1,
     required:false,
   })
-  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   categoryId: number;
 
@@ -78,7 +75,6 @@ export class CreateProductDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber({}, { each: true }) // Valida cada item do array
-  @Transform(({ value }) => value.map((id: string) => parseInt(id, 10)))
   modelId: number[];
 
 
@@ -91,7 +87,6 @@ export class CreateProductDto {
   @ArrayNotEmpty()
   @IsNumber({}, { each: true }) // Valida cada item do array
   @Type(() => Number)
-  @Transform(({ value }) => value.map((id: string) => parseInt(id, 10)))
   fornecedorId: number[]; 
 
   @ApiProperty({
