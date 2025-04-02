@@ -4,12 +4,13 @@ import { LoginAdminDto } from '../dtos/loginAdmin.dto';
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { IMessage } from 'src/shared/providers/messages/IMessage';
 
 @Injectable()
 export class AdminService{
   constructor (private adminRepository:AdminRepository,
         @Inject() private jwtService: JwtService,
-        private configService:ConfigService
+        @Inject('IMESSAGE_PROVIDER') private messageProvider:IMessage
   ) {
   }
   async login(loginAdminDto:LoginAdminDto):Promise<{token:string}>{
