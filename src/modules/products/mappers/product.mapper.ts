@@ -10,6 +10,8 @@ export class ProductMapper{
       imgUrl: product.imageUrl,
       categoria: product.category.name,
       descricao: product.description,
+      price: product.price,
+      pricecoast:product.priceoast,
       fornecedores: product.fornecedores.map((p) =>{
         return{
           name: p.fornecedor.name,
@@ -36,6 +38,8 @@ export class ProductMapper{
           imgUrl: product.imageUrl,
           categoria: product.category.name,
           descricao: product.description,
+          price: product.price,
+          pricecoast:product.priceoast,
           fornecedores: product.fornecedores.map((f) => {
             return {
               name: f.fornecedor.name,

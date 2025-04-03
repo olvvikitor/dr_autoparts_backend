@@ -30,6 +30,12 @@ export class ResponseProductDto {
   @ApiProperty({ description: 'Lista de fornecedores do produto', type: [ResponseFornecedorDto] })
   fornecedores: ResponseFornecedorDto[];
 
+  @ApiProperty({ description: 'Lista de fornecedores do produto', type: [Number] })
+  price:number
+
+  @ApiProperty({ description: 'Lista de fornecedores do produto', type: [Number] })
+  pricecoast:number
+
   @ApiProperty({ description: 'Categoria do produto', example: 'Eletrico' })
   categoria: string;
 
