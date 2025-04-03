@@ -172,7 +172,26 @@ export class ProductRepository {
         fornecedores:{
           create: data.fornecedorId.map((idFornecedor:number)=>({fornecedorId:idFornecedor}))
         }
-        
       }})
+  }
+  async delete(id:number):Promise<void>{
+    
+    await this.prismaService.productFornecedor.deleteMany({
+      where:{
+        productId: id
+      }
+    })
+    await this.prismaService.productModel.deleteMany({
+      where:{
+        productId:id
+      }
+    })
+
+    await this.prismaService.product.delete({
+      where: {
+        id
+      },
+      
+    })
   }
 }

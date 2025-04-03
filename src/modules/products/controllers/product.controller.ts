@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpStatus,
@@ -33,6 +34,7 @@ import { MRequest } from 'src/shared/infra/http/MRequest';
 import { UpdateProductService } from '../services/update.product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
+import { DeleteProductByIdService } from '../services/delete.product.service';
 
 
 @UseGuards(AuthGuard)
@@ -342,5 +344,70 @@ export class ProductController {
       parseInt(id),
       data
     );
+  }
+
+  @ApiOperation({summary:'Deletar um produto'})
+  @ApiResponse({
+    status: 401,
+    description: 'Não autenticado - O usuário precisa estar autenticado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 401,
+          message: 'Token inválido ou ausente',
+          error: 'Unauthorized',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Acesso negado - O usuário não tem permissão para acessar este recurso',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 403,
+          message: 'Você não tem permissão para acessar este recurso',
+          error: 'Forbidden',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Recurso não encontrado',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 404,
+          message:
+            'Produto não encontrado',
+          error: 'Not Found',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Produto deletado com sucesso',
+    content: {
+      'application/json': {
+        example: {
+          statusCode: 200,
+          message: 'deletado com sucesso',
+        },
+      },
+    },
+  })
+  @Delete('delete/:id')
+  async deleteProduct(@Param('id') id:string, @Req() req: MRequest):Promise<void>{
+    const deleteProductService = this.modulesRefs.get(DeleteProductByIdService)
+    if(req.user.role !== Role.ADMIN){
+      throw new ForbiddenException('Usuário com perfil inválido')
+    }
+
+    await deleteProductService.execute(parseInt(id))
+
   }
 }
