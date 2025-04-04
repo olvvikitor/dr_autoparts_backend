@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ResponseCategoryDto{
-
-
   @ApiProperty({
     example: 1,
     description: 'Id da categoria'
