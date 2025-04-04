@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TipoUnidade } from '@prisma/client';
+import { ResponseCategoryDto } from 'src/modules/category/dto/response-category.dto';
 import { ResponseFornecedorDto } from 'src/modules/fornecedor/dto/response-fornecedor.dto';
 
 export class RespondeModelDto {
@@ -39,7 +40,7 @@ export class ResponseProductDto {
   pricecoast: number;
 
   @ApiProperty({ description: 'Categoria do produto', example: 'Eletrico' })
-  categoria: string;
+  categoria: ResponseCategoryDto;
 
   @ApiProperty({ description: 'Nome do produto', example: 'Cambio XYZ' })
   name: string;
