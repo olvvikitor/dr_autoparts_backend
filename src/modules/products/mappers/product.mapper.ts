@@ -6,6 +6,7 @@ export class ProductMapper{
     
     return {
       id: product.id,
+      code: product.code,
       name:product.name,
       imgUrl: product.imageUrl,
       categoria: product.category.name,
@@ -34,6 +35,7 @@ export class ProductMapper{
       products.map(async (product) => {
         return {
           id: product.id,
+          code: product.code,
           name: product.name,
           imgUrl: product.imageUrl,
           categoria: product.category.name,

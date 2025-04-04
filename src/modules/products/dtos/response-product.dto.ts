@@ -18,6 +18,9 @@ export class ResponseProductDto {
   @ApiProperty({ description: 'ID do produto', example: 1 })
   id: number;
 
+  @ApiProperty({ description: 'Código do produto', example: 'XP34582J' })
+  code: string;
+
   @ApiProperty({ description: 'Descrição do produto', example: 'melhor cambio x' })
   descricao: string;
 
