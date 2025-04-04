@@ -11,7 +11,7 @@ export class Response {
     example: 'Civic',
     description: 'Nome do modelo do veículo',
   })
-  nome: string;
+  name: string;
 
   @ApiProperty({
     example: '2024',

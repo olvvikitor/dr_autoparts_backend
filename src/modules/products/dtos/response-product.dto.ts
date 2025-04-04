@@ -1,17 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TipoUnidade } from '@prisma/client';
 import { ResponseFornecedorDto } from 'src/modules/fornecedor/dto/response-fornecedor.dto';
+import { Response } from 'src/modules/modelo/dto/response-modelo-dto copy';
 
-export class RespondeModelDto {
-  @ApiProperty({ description: 'Nome do modelo' })
-  name: string;
-
-  @ApiProperty({ description: 'Marca do modelo' })
-  marca: string;
-
-  @ApiProperty({ description: 'Ano do modelo' })
-  ano: string;
-}
 
 
 export class ResponseProductDto {
@@ -24,8 +15,8 @@ export class ResponseProductDto {
   @ApiProperty({ description: 'Tipo de unidade do produto', enum: TipoUnidade, example: TipoUnidade.PECA})
   tipo: TipoUnidade;
 
-  @ApiProperty({ description: 'Lista de modelos do produto', type: [RespondeModelDto] })
-  modelos: RespondeModelDto[];
+  @ApiProperty({ description: 'Lista de modelos do produto', type: [Response] })
+  modelos: Response[];
 
   @ApiProperty({ description: 'Lista de fornecedores do produto', type: [ResponseFornecedorDto] })
   fornecedores: ResponseFornecedorDto[];

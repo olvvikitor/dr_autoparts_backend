@@ -12,12 +12,14 @@ export class ProductMapper{
       descricao: product.description,
       fornecedores: product.fornecedores.map((p) =>{
         return{
+          id: p.fornecedor.id,
           name: p.fornecedor.name,
           code: p.fornecedor.code,
         }
       }),
       modelos:product.models.map((m) =>{
         return{
+          id: m.model.id,
           ano:m.model.ano,
           marca:m.model.marca,
           name:m.model.name
@@ -38,12 +40,14 @@ export class ProductMapper{
           descricao: product.description,
           fornecedores: product.fornecedores.map((f) => {
             return {
+              id: f.fornecedor.id,
               name: f.fornecedor.name,
               code: f.fornecedor.code,
             };
           }),
           modelos: product.models.map((m) => {
             return {
+              id: m.model.id,
               name: m.model.name,
               marca: m.model.marca,
               ano: m.model.ano
