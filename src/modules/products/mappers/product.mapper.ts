@@ -17,7 +17,7 @@ export class ProductMapper {
       categoria: product.category.name,
       descricao: product.description,
       price: product.price,
-      pricecoast: product.pricecoast,
+      pricecoast: product.priceoast,
       fornecedores: product.fornecedores.map((p) => ({
         id: p.fornecedor.id,
         name: p.fornecedor.name,
