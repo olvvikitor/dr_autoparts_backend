@@ -4,7 +4,7 @@ export class ResponseFornecedorDto {
 
   @ApiProperty({
     description: 'id do fornecedor',
-    example: 'Pireli'
+    example: '2'
     })
   id: number
 

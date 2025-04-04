@@ -2,6 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Response {
   @ApiProperty({
+    example: '1',
+    description: 'id do modelo do veículo',
+  })
+  id: number;
+
+  @ApiProperty({
     example: 'Civic',
     description: 'Nome do modelo do veículo',
   })
