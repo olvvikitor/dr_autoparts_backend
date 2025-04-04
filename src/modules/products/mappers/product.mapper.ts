@@ -14,7 +14,10 @@ export class ProductMapper {
       code: product.code,
       name: product.name,
       imgUrl: product.imageUrl,
-      categoria: product.category.name,
+      categoria: {
+        id:product.category.id,
+        name: product.category.name
+      },
       descricao: product.description,
       price: product.price,
       pricecoast: product.priceoast,
