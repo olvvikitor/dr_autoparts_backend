@@ -1,14 +1,21 @@
-import { IsNotEmpty, IsNumber, IsArray, ArrayNotEmpty, IsOptional, IsString } from 'class-validator';
-import { TipoUnidade } from '../enums/tipoUnidade';
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { 
+  IsNotEmpty, 
+  IsNumber, 
+  IsArray, 
+  ArrayNotEmpty, 
+  IsOptional, 
+  IsString 
+} from 'class-validator';
+import { ApiProperty, ApiConsumes } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsFile } from 'nestjs-form-data';
+import { TipoUnidade } from '../enums/tipoUnidade';
 
 export class CreateProductDto {
   
   @ApiProperty({
-    description:'Nome do produto',
-    example:'Caixa de marcha',
+    description: 'Nome do produto',
+    example: 'Caixa de marcha',
     required: true
   })
   @IsNotEmpty()
@@ -16,8 +23,8 @@ export class CreateProductDto {
   name: string;
 
   @ApiProperty({
-    description:'Descrição do produto',
-    example:'A melhor caixa de marcha que existe',
+    description: 'Descrição do produto',
+    example: 'A melhor caixa de marcha que existe',
     required: true
   })
   @IsNotEmpty()
@@ -25,14 +32,14 @@ export class CreateProductDto {
   description: string;
 
   @ApiProperty({
-    description:'Código do produto',
-    example:'D105065',
+    description: 'Código do produto',
+    example: 'D105065',
     required: true
   })
   @IsNotEmpty()
   @IsString()
-  code: string
-
+  code: string;
+  
   @ApiProperty({
     description:'Tipo de produto',
     example:TipoUnidade.JOGO,
@@ -40,12 +47,11 @@ export class CreateProductDto {
     required:true
   })
   tipo: TipoUnidade
-  
 
   @ApiProperty({
     description: 'Preço do produto',
     example: 69.27,
-    required:false,
+    required: false,
   })
   @Transform(({ value }) => parseFloat(value))
   @IsNumber()
@@ -54,54 +60,50 @@ export class CreateProductDto {
   @ApiProperty({
     description: 'Preço de custo',
     example: 69.27,
-    required:false,
+    required: false,
   })
   @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   priceoast: number; 
 
-
   @ApiProperty({
     description: 'Id da categoria',
     example: 1,
-    required:false,
+    required: false,
   })
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   categoryId: number;
 
   @ApiProperty({
-    description: `Ids de modelos que em que o produto 'funciona'`,
-    example: [1,5,45],
-    required:true,
+    description: 'Ids de modelos em que o produto funciona',
+    example: [1, 5, 45],
+    required: true,
   })
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber({}, { each: true }) // Valida cada item do array
-  @Transform(({ value }) => value.map((id: string) => parseInt(id, 10)))
+  @Transform(({ value }) => Array.isArray(value) ? value.map((id) => parseInt(id, 10)) : [parseInt(value, 10)])
   modelId: number[];
 
-
   @ApiProperty({
-    description: `Ids de fornecedores  do produto`,
-    example: [3,7,5],
-    required:true,
+    description: 'Ids de fornecedores do produto',
+    example: [3, 7, 5],
+    required: true,
   })
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber({}, { each: true }) // Valida cada item do array
-  @Type(() => Number)
-  @Transform(({ value }) => value.map((id: string) => parseInt(id, 10)))
+  @Transform(({ value }) => Array.isArray(value) ? value.map((id) => parseInt(id, 10)) : [parseInt(value, 10)])
   fornecedorId: number[]; 
 
   @ApiProperty({
-    description: `Caminho da imagem`,
-    required:false,
-    format:'binary', 
-    })
+    description: 'Imagem do produto',
+    required: false,
+    type: 'string',
+    format: 'binary', // Define como um arquivo binário
+  })
   @IsOptional()
-  @IsString()
-  @IsFile()
-
+  @IsFile() // Valida que o campo será um arquivo
   image?: Express.Multer.File;
 }

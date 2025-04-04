@@ -11,7 +11,7 @@ export class FornecedorService {
   async createNewFornecedor(data: CreateFornecedorDto): Promise<void> {
     const fornecedorExists = await this.prismaService.fornecedor.findFirst({
       where: {
-        OR: [{ name: data.nome }, { code: data.code }],
+        OR: [{ name: data.name }, { code: data.code }],
       },
     });
 
@@ -24,7 +24,7 @@ export class FornecedorService {
     await this.prismaService.fornecedor.create({
       data: {
         code: data.code,
-        name: data.nome,
+        name: data.name,
       },
     });
   }
@@ -41,7 +41,7 @@ export class FornecedorService {
 
     const fornecedorExists = await this.prismaService.fornecedor.findFirst({
       where: {
-        OR: [{ name: data.nome }, { code: data.code }],
+        OR: [{ name: data.name }, { code: data.code }],
         AND: { NOT: { id: id } },
       },
     });
@@ -56,7 +56,7 @@ export class FornecedorService {
       where: { id: id },
       data: {
         code: data.code,
-        name: data.nome,
+        name: data.name,
       },
     });
   }

@@ -9,7 +9,7 @@ export class CreateFornecedorDto{
     })
   @IsString()
   @IsNotEmpty()
-  nome: string
+  name: string
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
