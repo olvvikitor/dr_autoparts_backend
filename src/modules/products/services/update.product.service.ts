@@ -4,10 +4,7 @@ import { CreateProductDto } from '../dtos/create-product.dto';
 import { CategoryService } from 'src/modules/category/services/category.service';
 import { FornecedorService } from 'src/modules/fornecedor/services/fornecedor.service';
 import { ModeloService } from 'src/modules/modelo/services/modelo.service';
-import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repositories/productFornecedor.repository';
-import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
-import { Role } from 'src/modules/users/entities/enums/role.enum';
 import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 import { ProductMapper } from '../mappers/product.mapper';
@@ -37,6 +34,7 @@ export class UpdateProductService {
 
     if(data.image){
       await this.storageProvider.delete(product.imgUrl)
+      
       await this.productRepository.update(idProduct, data);
     }
     await this.productRepository.update(idProduct, data);

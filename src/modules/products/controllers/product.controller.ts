@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   HttpStatus,
+  Inject,
   Param,
   ParseFilePipeBuilder,
   Post,
@@ -35,13 +36,19 @@ import { UpdateProductService } from '../services/update.product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
 import { DeleteProductByIdService } from '../services/delete.product.service';
+import { memoryStorage } from 'multer';
+import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
 
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 @Controller('products')
 export class ProductController {
-  constructor(private modulesRefs: ModuleRef) {}
+  constructor(
+    private modulesRefs: ModuleRef,
+        @Inject('IStorageProvider') private storageProvider:IStorageProvider
+    
+  ) {}
 
   /**
    * @route POST /products/new
@@ -131,7 +138,7 @@ export class ProductController {
     },
   })
   @Post('new')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image',{storage:memoryStorage()}))
   async createNewProduct(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -148,7 +155,7 @@ export class ProductController {
     @Req() req: MRequest,
   ): Promise<void> {
 
-    const urlImg = image ? (image as any).location || image.path : null;
+    const urlImg = await this.storageProvider.upload(image)
     const createProductService: CreateProductService =
       this.modulesRefs.get(CreateProductService);
 
@@ -331,7 +338,7 @@ export class ProductController {
       },
     },
   })
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image',{storage:memoryStorage()}))
   @Put('update/:id')
   async updateProduct(
     @Param('id') id: string,
@@ -347,7 +354,7 @@ export class ProductController {
     @Body() data: CreateProductDto,
     @Req() req: MRequest,
   ): Promise<void> {
-    const urlImg = image ? (image as any).location || image.path : null;
+    const urlImg = await this.storageProvider.upload(image)
     const updateProductService = this.modulesRefs.get(UpdateProductService);
 
     data.image = urlImg
