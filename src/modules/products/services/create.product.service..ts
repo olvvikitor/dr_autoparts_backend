@@ -29,8 +29,6 @@ export class CreateProductService {
     @Inject() private categoryService: CategoryService,
     @Inject() private fornecedorService: FornecedorService,
     @Inject() private modeloService: ModeloService,
-    @Inject() private productModel: ProductModelRepository,
-    @Inject() private productFornecedor: ProductFornecedorRepository
   ) {}
 
   /**
@@ -40,7 +38,7 @@ export class CreateProductService {
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto, urlImage:string): Promise<void> {
+  async createNewProduct(data: CreateProductDto): Promise<void> {
 
 
     
@@ -48,7 +46,7 @@ export class CreateProductService {
     await this.verifyExistsIds(data.modelId, data.fornecedorId, data.categoryId);
 
     // Cria o produto no banco de dados
-    await this.productRepository.createNewProduct(data, urlImage);
+    await this.productRepository.createNewProduct(data);
 
   }
 

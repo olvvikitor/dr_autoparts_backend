@@ -143,7 +143,7 @@ export class ProductController {
           fileIsRequired: false,
         }),
     )
-    image: Express.Multer.File,
+    image: Express.Multer.File | undefined,
     @Body() data: CreateProductDto,
     @Req() req: MRequest,
   ): Promise<void> {
@@ -152,12 +152,14 @@ export class ProductController {
     const createProductService: CreateProductService =
       this.modulesRefs.get(CreateProductService);
 
+      data.image = urlImg
+
     
       if(req.user.role !== Role.ADMIN){
         throw new ForbiddenException('Usuário com perfil inválido')
       }
 
-    await createProductService.createNewProduct(data, urlImg);
+    await createProductService.createNewProduct(data);
   } 
 
   @ApiOperation({ summary: 'busca de todos os produto' })
@@ -272,6 +274,7 @@ export class ProductController {
    * @param idProduct -ID do produto a ser editado
    * @returns {Promise<void>}
    */
+  @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update de produto' })
   @ApiBody({ type: CreateProductDto })
@@ -328,13 +331,26 @@ export class ProductController {
       },
     },
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Put('update/:id')
   async updateProduct(
     @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder().addFileTypeValidator({
+        fileType: 'png'
+      }).build({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        fileIsRequired: false,
+      })
+    ) 
+    image:Express.Multer.File | undefined,
     @Body() data: CreateProductDto,
     @Req() req: MRequest,
   ): Promise<void> {
+    const urlImg = image ? (image as any).location || image.path : null;
     const updateProductService = this.modulesRefs.get(UpdateProductService);
+
+    data.image = urlImg
 
     if(req.user.role !== Role.ADMIN){
       throw new ForbiddenException('Usuário com perfil inválido')
@@ -342,7 +358,7 @@ export class ProductController {
 
     return await updateProductService.execute(
       parseInt(id),
-      data
+      data, 
     );
   }
 

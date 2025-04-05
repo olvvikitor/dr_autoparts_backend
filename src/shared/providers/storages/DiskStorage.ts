@@ -5,10 +5,11 @@ import { Injectable } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { editFileName } from 'src/shared/multer/renameFile';
+import { IStorageProvider } from './IStorageProvider';
 
 
 @Injectable()
-export class Diskprovider implements MulterOptionsFactory{
+export class Diskprovider implements MulterOptionsFactory,IStorageProvider{
   createMulterOptions():  MulterModuleOptions {
     return {
       storage: diskStorage({
@@ -31,7 +32,7 @@ export class Diskprovider implements MulterOptionsFactory{
     console.log(file);
   
     // Define corretamente o caminho completo para o arquivo dentro do diretório 'uploads'
-    const filePath = path.join(__dirname,'..','..', '..', '..', 'uploads', file)
+    const filePath = path.join(__dirname,'..','..', '..', '..', file)
   
     console.log(filePath);  // Imprime o caminho para garantir que está correto
   

@@ -3,9 +3,10 @@ import * as multerS3 from 'multer-s3';
 import { Injectable } from '@nestjs/common';
 import { S3 } from '@aws-sdk/client-s3';
 import { editFileName, getType } from 'src/shared/multer/renameFile';
+import { IStorageProvider } from './IStorageProvider';
 
 @Injectable()
-export class S3StorageProvider implements MulterOptionsFactory {
+export class S3StorageProvider implements MulterOptionsFactory, IStorageProvider {
 
   private s3: S3;
 

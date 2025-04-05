@@ -8,6 +8,10 @@ import { ProductFornecedorRepository } from 'src/modules/productFornecedor/repos
 import { ProductModelRepository } from 'src/modules/productModel/repositories/productModel.repository';
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
 import { Role } from 'src/modules/users/entities/enums/role.enum';
+import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
+import { ResponseProductDto } from '../dtos/response-product.dto';
+import { ProductMapper } from '../mappers/product.mapper';
+import { UpdateProductDto } from '../dtos/update-product.dto';
 
 @Injectable()
 export class UpdateProductService {
@@ -16,21 +20,25 @@ export class UpdateProductService {
     @Inject() private categoryService: CategoryService,
     @Inject() private fornecedorService: FornecedorService,
     @Inject() private modeloService: ModeloService,
+    @Inject('IStorageProvider') private storageProvider:IStorageProvider
   ) {}
 
   //O método de editar produto, recebe os parametros informados.
   //ATENÇÃO: PASSAR NO CORPO DA REQUISIÇÃO OS FORNECEDORES E MODELOS QUE JÁ TINHA ANTES
   //POIS QUANDO EDITA UM PRODUTO<O METODO REMOVE TODOS E ADICIONA OS QUE VEM NO CORPO
-  async execute(idProduct: number, data: CreateProductDto): Promise<void> {
+  async execute(idProduct: number, data: UpdateProductDto): Promise<void> {
 
-    await this.verifyExistsIds(
+    const product = await this.verifyExistsIds(
       data.modelId,
       data.fornecedorId,
       data.categoryId,
       idProduct,
     );
 
-
+    if(data.image){
+      await this.storageProvider.delete(product.imgUrl)
+      await this.productRepository.update(idProduct, data);
+    }
     await this.productRepository.update(idProduct, data);
 
   }
@@ -48,7 +56,8 @@ export class UpdateProductService {
     idsFornecedores: number[],
     idCategory: number,
     idProduct: number,
-  ): Promise<void> {
+  ): Promise<ResponseProductDto> {
+
     const product = await this.productRepository.getProductById(idProduct);
 
     if (!product) {
@@ -81,5 +90,6 @@ export class UpdateProductService {
         }
       }),
     );
+    return new ProductMapper().parseToDto(product)
   }
 }

@@ -12,7 +12,7 @@ import { IsFile } from 'nestjs-form-data';
 import { TipoUnidade } from '../enums/tipoUnidade';
 import { IsFileOrEmpty } from 'src/shared/validators/IsFileOrEmpty';
 
-export class CreateProductDto {
+export class UpdateProductDto {
   
   @ApiProperty({
     description: 'Nome do produto',
