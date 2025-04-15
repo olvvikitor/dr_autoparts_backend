@@ -1,11 +1,13 @@
 import { Global, Module } from '@nestjs/common';
-import { ProductModule } from './modules/products/products.module';
-import { UserModule } from './modules/users/user.module';
+import { RegisterUserModule } from './modules/users/register/register.user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CartModule } from './modules/cart/cart.module';
-import { CartItemModule } from './modules/cartItem/cartItem.module';
+
 import AuthModule from './shared/auth/authGuard.module';
-import { AdminModule } from './modules/admin/admin.module';
+import { AdminModule } from './modules/admin/auth/admin.module';
+import { ProductModule } from './modules/admin/products/products.module';
+import { AuthUserModule } from './modules/users/auth/user.module';
+import { CartItemModule } from './modules/users/cartItem/cartItem.module';
+import { CartModule } from './modules/users/cart/cart.module';
 
 
 @Global()
@@ -15,7 +17,8 @@ import { AdminModule } from './modules/admin/admin.module';
       isGlobal: true,
     }),
     ProductModule,
-    UserModule,
+    RegisterUserModule,
+    AuthUserModule,
     CartModule,
     CartItemModule,
     AdminModule,

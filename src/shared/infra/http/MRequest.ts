@@ -1,4 +1,4 @@
-import { Role } from 'src/modules/users/entities/enums/role.enum';
+import { Role } from '@prisma/client';
 import { Request } from 'express';
 
 export class MRequest extends Request {

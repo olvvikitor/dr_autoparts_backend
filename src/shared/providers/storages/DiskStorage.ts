@@ -1,5 +1,5 @@
 import { MulterModuleOptions, MulterOptionsFactory } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
+import { memoryStorage, Multer } from 'multer';
 import { Injectable } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -14,7 +14,7 @@ export class Diskprovider implements MulterOptionsFactory, IStorageProvider {
     };
   }
 
-  async upload(file: any): Promise<string> {
+  async upload(file: Express.Multer.File): Promise<string> {
     const uploadsDir = path.resolve(process.cwd(), 'uploads');
     const filename = generateFileName(file.originalname);
     const filePath = path.join(uploadsDir, filename);
