@@ -38,6 +38,8 @@ import { Role } from '@prisma/client';
 import { DeleteProductByIdService } from '../services/delete.product.service';
 import { memoryStorage } from 'multer';
 import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
+import { GetAllProductClientService } from '../services/user/getAll-client.products.service';
+import { ResponseClientProductDto } from '../dtos/response-client-product.dto';
 
 
 @UseGuards(AuthGuard)
@@ -193,9 +195,15 @@ export class ProductController {
     },
   })
   @Get('/all')
-  async getAllProducts(): Promise<Array<ResponseProductDto>> {
-    const getAllProductsService = this.modulesRefs.get(GetAllProductService);
-    return await getAllProductsService.getAllProducts();
+  async getAllProducts(@Req() req:MRequest): Promise<Array<ResponseProductDto |ResponseClientProductDto>> {
+    if(req.user.role === 'ADMIN'){
+      const getAllProductsService = this.modulesRefs.get(GetAllProductService);
+      return await getAllProductsService.getAllProducts()
+    }
+    else{
+      const getAllProductsService = this.modulesRefs.get(GetAllProductClientService);
+      return await getAllProductsService.getAllProducts()
+    }
   }
 
   /**
@@ -272,10 +280,17 @@ export class ProductController {
   })
   @Get('/')
   async getProduct(
+    @Req() req:MRequest,
     @Query('filter') filter: string,
   ): Promise<Array<ResponseProductDto>> {
-    const getProductService = this.modulesRefs.get(GetProductsService);
-    return await getProductService.execute(filter);
+    if(req.user.role === 'ADMIN'){
+      const getAllProductsService = this.modulesRefs.get(GetProductsService);
+      return await getAllProductsService.execute(filter)
+    }
+    else{
+      const getAllProductsService = this.modulesRefs.get(GetProductsService);
+      return await getAllProductsService.execute(filter)
+    }
   }
 
   /**

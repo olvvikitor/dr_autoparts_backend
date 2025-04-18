@@ -16,6 +16,7 @@ export class GetProductByIdService {
           `Produto com identificador: ${id} não encontrado`,
         );
       }
+      
       return new ProductMapper().parseToDto(product); 
   }
 }

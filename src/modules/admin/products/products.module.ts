@@ -15,6 +15,9 @@ import AuthModule from 'src/shared/auth/authGuard.module';
 import { UpdateProductService } from './services/update.product.service';
 import { StorageModule } from 'src/shared/providers/storages/StorageModule';
 import { DeleteProductByIdService } from './services/delete.product.service';
+import { GetProductClientByIdService } from './services/user/getById-client.product.service';
+import { GetAllProductClientService } from './services/user/getAll-client.products.service';
+import { GetClientProductsByNameService } from './services/user/getByNome-client.product.service';
 
 @Module({
   imports: [
@@ -34,7 +37,9 @@ import { DeleteProductByIdService } from './services/delete.product.service';
     GetProductByIdService,
     GetProductsService,
     UpdateProductService,
-    DeleteProductByIdService
+    DeleteProductByIdService,
+    GetClientProductsByNameService,
+    GetAllProductClientService,
   ],
   controllers: [ProductController],
   exports: [
@@ -44,6 +49,8 @@ import { DeleteProductByIdService } from './services/delete.product.service';
     GetProductByIdService,
     GetProductsService,
     UpdateProductService,
+    GetClientProductsByNameService,
+    GetAllProductClientService,
   ],
 })
 export class ProductModule {}
