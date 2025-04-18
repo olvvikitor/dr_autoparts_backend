@@ -122,7 +122,7 @@ export class ProductRepository {
                     },
                     {
                       fornecedor: {
-                        name: { contains: filter, mode: 'insensitive' },
+                        code: { contains: filter, mode: 'insensitive' },
                       },
                     },
                   ],
