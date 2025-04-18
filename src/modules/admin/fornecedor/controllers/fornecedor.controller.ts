@@ -1,5 +1,5 @@
 import { 
-  Body, Controller, Delete, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards
+  Body, Controller, Delete, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req, UseGuards
 } from '@nestjs/common';
 import { CreateFornecedorDto } from '../dto/create-fornecedor-dto';
 import { FornecedorService } from '../services/fornecedor.service';
@@ -42,7 +42,7 @@ export class FornecedorController {
   @ApiOperation({ summary: 'Obtém um fornecedor pelo ID' })
   @ApiResponse({ status: 200, description: 'Fornecedor encontrado' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
-  @Get('/:id')
+  @Get('getById/:id')
   async getFornecedorById(@Param('id') id: string): Promise<ResponseFornecedorDto> {
     return await this.fornecedorService.findFornecedorById(parseInt(id));
   }
@@ -50,18 +50,11 @@ export class FornecedorController {
   @ApiOperation({ summary: 'Obtém um fornecedor pelo nome' })
   @ApiResponse({ status: 200, description: 'Fornecedor encontrado' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
-  @Get('findByName/:name')
-  async getFornecedorByName(@Param('name') name: string): Promise<ResponseFornecedorDto> {
-    return await this.fornecedorService.findFornecedorByName(name);
+  @Get('/findByNameOrCode')
+  async getFornecedorByNameOrCode(@Query('param') param: string): Promise<ResponseFornecedorDto> {
+    return await this.fornecedorService.findFornecedorByNameOrCode(param);
   }
 
-  @ApiOperation({ summary: 'Obtém um fornecedor pelo código' })
-  @ApiResponse({ status: 200, description: 'Fornecedor encontrado' })
-  @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
-  @Get('/:code')
-  async getFornecedorByCode(@Param('code') code: string): Promise<ResponseFornecedorDto> {
-    return await this.fornecedorService.findFornecedorByCode(code);
-  }
 
   @ApiOperation({ summary: 'Atualiza um fornecedor pelo ID' })
   @ApiResponse({ status: 200, description: 'Fornecedor atualizado com sucesso' })

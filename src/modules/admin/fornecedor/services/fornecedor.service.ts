@@ -61,18 +61,7 @@ export class FornecedorService {
     });
   }
 
-  async findFornecedorByCode(code: string): Promise<Fornecedor> {
-    const fornecedor = await this.prismaService.fornecedor.findFirst({
-      where: {
-        code: code,
-      },
-    });
 
-    if (!fornecedor) {
-      throw new NotFoundExceptionHandler('Fornecedor', 'code', code);
-    }
-    return fornecedor;
-  }
   async findFornecedorById(id: number): Promise<Fornecedor> {
     const fornecedor = await this.prismaService.fornecedor.findFirst({
       where: {
@@ -85,15 +74,18 @@ export class FornecedorService {
     }
     return fornecedor;
   }
-  async findFornecedorByName(name: string): Promise<Fornecedor> {
+  async findFornecedorByNameOrCode(param: string): Promise<Fornecedor> {
     const fornecedor = await this.prismaService.fornecedor.findFirst({
       where: {
-        name: name,
+        OR:[
+          { name: { contains: param, mode: 'insensitive' } },
+          { code: { contains: param, mode: 'insensitive' } },
+        ]
       },
     });
 
     if (!fornecedor) {
-      throw new NotFoundExceptionHandler('Fornecedor', 'name', name);
+      throw new NotFoundExceptionHandler('Fornecedor', 'name', param);
     }
     return fornecedor;
   }
