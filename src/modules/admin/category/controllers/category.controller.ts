@@ -134,7 +134,7 @@ export class CategoryController {
     type: ResponseCategoryDto,
     description: 'Sucesso',
   })
-  @Get('/:name')
+  @Get('findByName/:name')
   async findByName(@Param('name') name: string): Promise<ResponseCategoryDto> {
     return this.categoryService.findCategoryByName(name);
   }

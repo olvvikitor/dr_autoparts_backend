@@ -9,13 +9,13 @@ export class CategoryRepository {
 
   async create(data: CreateCategoryDto): Promise<void> {
     await this.prismaService.category.create({
-      data: { name: data.name },
+      data: { name: data.name }
     });
   }
 
   async findCategoryByName(nome: string): Promise<ResponseCategoryDto> {
     return await this.prismaService.category.findFirst({
-      where: { name: nome },
+      where: { name: nome }
     });
   }
   async findCategoryById(id: number): Promise<ResponseCategoryDto> {

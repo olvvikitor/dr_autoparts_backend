@@ -23,6 +23,7 @@ export class CategoryService {
   }
 
   async findCategoryByName(name: string): Promise<ResponseCategoryDto> {
+    
     const categoria = await this.categoryRepository.findCategoryByName(name);
 
     if(!categoria){

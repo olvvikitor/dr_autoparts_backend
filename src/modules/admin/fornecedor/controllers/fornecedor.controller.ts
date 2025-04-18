@@ -50,7 +50,7 @@ export class FornecedorController {
   @ApiOperation({ summary: 'Obtém um fornecedor pelo nome' })
   @ApiResponse({ status: 200, description: 'Fornecedor encontrado' })
   @ApiResponse({ status: 404, description: 'Fornecedor não encontrado' })
-  @Get('/:name')
+  @Get('findByName/:name')
   async getFornecedorByName(@Param('name') name: string): Promise<ResponseFornecedorDto> {
     return await this.fornecedorService.findFornecedorByName(name);
   }
