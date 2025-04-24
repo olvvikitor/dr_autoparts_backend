@@ -11,6 +11,7 @@ import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { ResponseProductDto } from '../dtos/response-product.dto';
 import { filter } from 'rxjs';
+import { UpdateProductDto } from '../dtos/update-product.dto';
 
 @Injectable()
 export class ProductRepository {
@@ -141,7 +142,7 @@ export class ProductRepository {
     } catch (error) {}
   }
 
-  async update(id: number, data: CreateProductDto): Promise<void> {
+  async update(id: number, data: UpdateProductDto): Promise<void> {
 
     await this.prismaService.productFornecedor.deleteMany({
       where:{

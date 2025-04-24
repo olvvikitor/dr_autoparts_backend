@@ -4,6 +4,7 @@ import { CreateProductDto } from '../dtos/create-product.dto';
 import { CategoryService } from '../../category/services/category.service';
 import { FornecedorService } from '../../fornecedor/services/fornecedor.service';
 import { ModeloService } from '../../modelo/services/modelo.service';
+import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
 
 
 /**
@@ -27,6 +28,7 @@ export class CreateProductService {
     @Inject() private categoryService: CategoryService,
     @Inject() private fornecedorService: FornecedorService,
     @Inject() private modeloService: ModeloService,
+    @Inject('IStorageProvider') private storageProvider:IStorageProvider
   ) {}
 
   /**
@@ -36,9 +38,12 @@ export class CreateProductService {
    * @throws NotFoundException Se algum dos IDs fornecidos (categoria, fornecedor ou modelo) não existir.
    * @throws ForbiddenException Se o usuario que estiver tentando cadastrar não for do tipo ADMIN
    */
-  async createNewProduct(data: CreateProductDto): Promise<void> {
+  async createNewProduct(data: CreateProductDto, image:Express.Multer.File): Promise<void> {
 
-
+    if(image){
+     const url = await this.storageProvider.upload(image)
+     data.image = url
+    }
     
     // Verifica se os IDs de modelo, fornecedor e categoria existem
     await this.verifyExistsIds(data.modelId, data.fornecedorId, data.categoryId);

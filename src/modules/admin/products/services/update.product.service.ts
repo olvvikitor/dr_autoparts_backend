@@ -24,7 +24,7 @@ export class UpdateProductService {
   //O método de editar produto, recebe os parametros informados.
   //ATENÇÃO: PASSAR NO CORPO DA REQUISIÇÃO OS FORNECEDORES E MODELOS QUE JÁ TINHA ANTES
   //POIS QUANDO EDITA UM PRODUTO<O METODO REMOVE TODOS E ADICIONA OS QUE VEM NO CORPO
-  async execute(idProduct: number, data: UpdateProductDto): Promise<void> {
+  async execute(idProduct: number, data: UpdateProductDto, newImage:Express.Multer.File): Promise<void> {
 
     const product = await this.verifyExistsIds(
       data.modelId,
@@ -32,13 +32,15 @@ export class UpdateProductService {
       data.categoryId,
       idProduct,
     );
-
-    if(data.image){
-      await this.storageProvider.delete(product.imgUrl)
-      
+    if(newImage){
+      await this.storageProvider.delete(product.imgUrl) 
+      const url = await this.storageProvider.upload(newImage)
+      data.image = url
       await this.productRepository.update(idProduct, data);
     }
-    await this.productRepository.update(idProduct, data);
+    else{
+      await this.productRepository.update(idProduct, data);
+    }
 
   }
   /**
@@ -58,6 +60,8 @@ export class UpdateProductService {
   ): Promise<ResponseProductDto> {
 
     const product = await this.productRepository.getProductById(idProduct);
+
+
 
     if (!product) {
       throw new NotFoundExceptionHandler('Produto', 'Id', idProduct);

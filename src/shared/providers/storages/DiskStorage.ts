@@ -35,7 +35,10 @@ export class Diskprovider implements MulterOptionsFactory, IStorageProvider {
    
   }
 
-  async delete(filename: string): Promise<void> {
+  async delete(url: string | undefined): Promise<void> {
+    if(url){
+    const filename = url.split('uploads/')[1]
+    console.log(filename)
     const filePath = path.resolve(process.cwd(), 'uploads', filename);
 
     try {
@@ -47,4 +50,6 @@ export class Diskprovider implements MulterOptionsFactory, IStorageProvider {
       throw new Error('Arquivo não encontrado');
     }
   }
+  return
+}
 }

@@ -12,7 +12,7 @@ import { IsFile } from 'nestjs-form-data';
 import { TipoUnidade } from '../enums/tipoUnidade';
 import { IsFileOrEmpty } from 'src/shared/validators/IsFileOrEmpty';
 
-export class UpdateProductDto {
+export class CreateProductDto {
   
   @ApiProperty({
     description: 'Nome do produto',
@@ -97,7 +97,6 @@ export class UpdateProductDto {
   @IsNumber({}, { each: true }) // Valida cada item do array
   @Transform(({ value }) => Array.isArray(value) ? value.map((id) => parseInt(id, 10)) : [parseInt(value, 10)])
   fornecedorId: number[]; 
-
 
   @ApiProperty({
     description: 'Imagem do produto',

@@ -40,6 +40,7 @@ import { memoryStorage } from 'multer';
 import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
 import { GetAllProductClientService } from '../services/user/getAll-client.products.service';
 import { ResponseClientProductDto } from '../dtos/response-client-product.dto';
+import { UpdateProductDto } from '../dtos/update-product.dto';
 
 
 @UseGuards(AuthGuard)
@@ -47,8 +48,7 @@ import { ResponseClientProductDto } from '../dtos/response-client-product.dto';
 @Controller('products')
 export class ProductController {
   constructor(
-    private modulesRefs: ModuleRef,
-        @Inject('IStorageProvider') private storageProvider:IStorageProvider
+    private modulesRefs: ModuleRef
     
   ) {}
 
@@ -160,19 +160,12 @@ export class ProductController {
     const createProductService: CreateProductService = this.modulesRefs.get(CreateProductService);
 
 
-    if(image){
-      const urlImg = await this.storageProvider.upload(image)
-      data.image = urlImg
+
+    if(req.user.role !== Role.ADMIN){
+        throw new ForbiddenException('Usuário com perfil inválido')
     }
 
-    const urlImg = ''
-    data.image = urlImg
-
-      if(req.user.role !== Role.ADMIN){
-        throw new ForbiddenException('Usuário com perfil inválido')
-      }
-
-    await createProductService.createNewProduct(data);
+    await createProductService.createNewProduct(data, image);
   } 
 
   @ApiOperation({ summary: 'busca de todos os produto' })
@@ -303,7 +296,7 @@ export class ProductController {
   @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update de produto' })
-  @ApiBody({ type: CreateProductDto })
+  @ApiBody({ type: UpdateProductDto })
   @ApiResponse({
     status: 401,
     description: 'Não autenticado - O usuário precisa estar autenticado',
@@ -370,28 +363,18 @@ export class ProductController {
       })
     ) 
     image:Express.Multer.File | undefined,
-    @Body() data: CreateProductDto,
+    @Body() data: UpdateProductDto,
     @Req() req: MRequest,
   ): Promise<void> {
     const updateProductService = this.modulesRefs.get(UpdateProductService);
 
-    if(image){
-      const urlImg = await this.storageProvider.upload(image)
-      data.image = urlImg
-    }
-
-    const urlImg = ''
-    data.image = urlImg
-
-    
-
     if(req.user.role !== Role.ADMIN){
       throw new ForbiddenException('Usuário com perfil inválido')
     }
-
     return await updateProductService.execute(
       parseInt(id),
       data, 
+      image
     );
   }
 
