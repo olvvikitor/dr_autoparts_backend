@@ -1,6 +1,5 @@
-import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable} from '@nestjs/common';
 import { ProductRepository } from '../repositories/product.repository';
-import { CreateProductDto } from '../dtos/create-product.dto';
 
 import { NotFoundExceptionHandler } from 'src/shared/errors/NotFoundExpetion';
 import { IStorageProvider } from 'src/shared/providers/storages/IStorageProvider';
@@ -32,6 +31,7 @@ export class UpdateProductService {
       data.categoryId,
       idProduct,
     );
+    
     if(newImage){
       await this.storageProvider.delete(product.imgUrl) 
       const url = await this.storageProvider.upload(newImage)

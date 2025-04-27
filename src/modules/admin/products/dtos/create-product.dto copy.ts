@@ -6,9 +6,8 @@ import {
   IsOptional, 
   IsString 
 } from 'class-validator';
-import { ApiProperty, ApiConsumes } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsFile } from 'nestjs-form-data';
 import { TipoUnidade } from '../enums/tipoUnidade';
 import { IsFileOrEmpty } from 'src/shared/validators/IsFileOrEmpty';
 

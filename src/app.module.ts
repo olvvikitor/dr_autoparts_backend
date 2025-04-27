@@ -8,6 +8,7 @@ import { ProductModule } from './modules/admin/products/products.module';
 import { AuthUserModule } from './modules/users/auth/user.module';
 import { CartItemModule } from './modules/users/cartItem/cartItem.module';
 import { CartModule } from './modules/users/cart/cart.module';
+import { CarrouselModule } from './modules/admin/carrousel/carrousel.module';
 
 
 @Global()
@@ -22,7 +23,8 @@ import { CartModule } from './modules/users/cart/cart.module';
     CartModule,
     CartItemModule,
     AdminModule,
-    AuthModule
+    AuthModule,
+    CarrouselModule
   ],
   controllers: [],
   providers: [],

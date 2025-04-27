@@ -172,3 +172,9 @@ model Order {
   status    OrderStatus @default(PENDENTE)
   createdAt DateTime    @default(now())
 }
+
+model Carrousel{
+  id Int @id @default(autoincrement())
+  active Boolean @default(false)
+  imgUrl String[]
+}
