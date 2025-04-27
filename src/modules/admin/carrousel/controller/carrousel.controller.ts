@@ -6,12 +6,21 @@ import {
   ParseFilePipeBuilder,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { CarrouselService } from '../service/create-carrousel.service';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from 'src/shared/auth/authGuard.service';
 
 @ApiTags('Carrousel')
 @Controller('carrousel')
@@ -19,6 +28,8 @@ export class CarrouselController {
   constructor(@Inject() private createCarrousel: CarrouselService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Cria um novo carrossel com até 4 imagens' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -36,7 +47,10 @@ export class CarrouselController {
     },
   })
   @ApiResponse({ status: 201, description: 'Carrossel criado com sucesso.' })
-  @ApiResponse({ status: 422, description: 'Arquivo inválido. Apenas imagens PNG são aceitas.' })
+  @ApiResponse({
+    status: 422,
+    description: 'Arquivo inválido. Apenas imagens PNG são aceitas.',
+  })
   @UseInterceptors(FilesInterceptor('images', 4, { storage: memoryStorage() }))
   async createNew(
     @UploadedFiles(
@@ -55,8 +69,11 @@ export class CarrouselController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista as imagens do carrossel' })
-  @ApiResponse({ status: 200, description: 'Lista de imagens retornada com sucesso.' })
+  @ApiOperation({ summary: 'Lista as imagens do carrossel que esta como active true' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de imagens retornada com sucesso.',
+  })
   async getCarrousel(): Promise<any> {
     return await this.createCarrousel.get();
   }
