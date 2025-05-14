@@ -5,11 +5,17 @@ import { StorageModule } from 'src/shared/providers/storages/StorageModule';
 import { CarrouselRepository } from './repository/carrousel.repository';
 import { CarrouselService } from './service/create-carrousel.service';
 import { CarrouselController } from './controller/carrousel.controller';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports:[AuthModule, StorageModule, PrismaModule],
   controllers:[CarrouselController],
-  providers:[CarrouselRepository, CarrouselService],
+  providers:[CarrouselRepository, CarrouselService,
+    {
+      provide: 'APP_GUARD',
+      useClass: ThrottlerGuard
+    }
+    ],
   exports:[CarrouselService]
 })
 export class CarrouselModule{}

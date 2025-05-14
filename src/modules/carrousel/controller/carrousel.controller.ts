@@ -21,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/auth/authGuard.service';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiTags('Carrousel')
 @Controller('carrousel')
@@ -69,6 +70,7 @@ export class CarrouselController {
   }
 
   @Get()
+  @Throttle({ default: { limit: 5, ttl: 600000 } })
   @ApiOperation({ summary: 'Lista as imagens do carrossel que esta como active true' })
   @ApiResponse({
     status: 200,

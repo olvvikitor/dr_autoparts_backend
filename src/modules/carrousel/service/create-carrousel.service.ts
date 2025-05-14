@@ -10,7 +10,6 @@ export class CarrouselService{
   @Inject('IStorageProvider') private storageService:IStorageProvider){
   }
 
-
   async create(images: Express.Multer.File[]):Promise<void>{
 
     const active = await this.carrouselRepository.getActive()
@@ -19,12 +18,12 @@ export class CarrouselService{
       await this.carrouselRepository.updateForDasactivate(active.id)
     }
 
-    const arrayImg = await Promise.all(images.map( async(image) => {
+    const arrayUrlImg = await Promise.all(images.map( async(image) => {
       const url = await this.storageService.upload(image)
       return url
     }))
 
-    await this.carrouselRepository.save(arrayImg)
+    await this.carrouselRepository.save(arrayUrlImg)
 
 
   }

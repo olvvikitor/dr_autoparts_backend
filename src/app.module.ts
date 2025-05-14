@@ -4,11 +4,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import AuthModule from './shared/auth/authGuard.module';
 import { AdminModule } from './modules/admin/auth/admin.module';
-import { ProductModule } from './modules/admin/products/products.module';
 import { AuthUserModule } from './modules/users/auth/user.module';
-import { CartItemModule } from './modules/users/cartItem/cartItem.module';
-import { CartModule } from './modules/users/cart/cart.module';
-import { CarrouselModule } from './modules/admin/carrousel/carrousel.module';
+import { ProductModule } from './modules/products/products.module';
+import { CarrouselModule } from './modules/carrousel/carrousel.module';
+import { CartItemModule } from './modules/cartItem/cartItem.module';
+import { CartModule } from './modules/cart/cart.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 
 @Global()
@@ -16,6 +17,14 @@ import { CarrouselModule } from './modules/admin/carrousel/carrousel.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ThrottlerModule.forRoot({
+      throttlers:[
+        {
+          ttl:60000,
+          limit:2
+        }
+      ]
     }),
     ProductModule,
     RegisterUserModule,
