@@ -70,7 +70,6 @@ export class CarrouselController {
   }
 
   @Get()
-  @Throttle({ default: { limit: 5, ttl: 600000 } })
   @ApiOperation({ summary: 'Lista as imagens do carrossel que esta como active true' })
   @ApiResponse({
     status: 200,

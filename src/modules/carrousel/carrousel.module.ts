@@ -11,10 +11,6 @@ import { ThrottlerGuard } from '@nestjs/throttler';
   imports:[AuthModule, StorageModule, PrismaModule],
   controllers:[CarrouselController],
   providers:[CarrouselRepository, CarrouselService,
-    {
-      provide: 'APP_GUARD',
-      useClass: ThrottlerGuard
-    }
     ],
   exports:[CarrouselService]
 })

@@ -9,7 +9,6 @@ import { ProductModule } from './modules/products/products.module';
 import { CarrouselModule } from './modules/carrousel/carrousel.module';
 import { CartItemModule } from './modules/cartItem/cartItem.module';
 import { CartModule } from './modules/cart/cart.module';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 
 @Global()
@@ -17,14 +16,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-    }),
-    ThrottlerModule.forRoot({
-      throttlers:[
-        {
-          ttl:60000,
-          limit:2
-        }
-      ]
     }),
     ProductModule,
     RegisterUserModule,
